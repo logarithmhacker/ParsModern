@@ -70,12 +70,12 @@ public final class ParsLoadingScreen extends Screen {
       graphics.fill(sweepX, panelTop + s(8), sweepX + s(18), panelTop + s(77), 857459455);
       UiTypography.centeredTitle(graphics, "PARS", cx, panelTop + s(24), PvpClient.theme().accent());
       UiTypography.centered(
-         graphics, "PARS MODERN PVP  //  " + this.minecraftVersion(), cx, panelTop + s(55), PvpClient.theme().text(), 0.82F * PvpClient.fontScale(), 1
+         graphics, "PARS MODERN PVP  //  " + this.minecraftVersion(), cx, panelTop + s(55), PvpClient.theme().text(), 0.82F * PvpClient.fontScale()
       );
       PARSFramework.progress(graphics, panelLeft + s(42), panelTop + s(91), panelWidth - s(84), 8, progress);
       int stage = Math.min(STAGES.length - 1, (int)(progress * STAGES.length));
       UiTypography.centered(
-         graphics, STAGES[stage] + "   " + Math.round(progress * 100.0F) + "%", cx, panelTop + s(112), PvpClient.theme().text(), 0.9F * PvpClient.fontScale(), 1
+         graphics, STAGES[stage] + "   " + Math.round(progress * 100.0F) + "%", cx, panelTop + s(112), PvpClient.theme().text(), 0.9F * PvpClient.fontScale()
       );
 
       for (int i = 0; i < STAGES.length; i++) {
@@ -83,7 +83,7 @@ public final class ParsLoadingScreen extends Screen {
          graphics.fill(x, panelTop + s(132), x + s(20), panelTop + s(135), i <= stage ? PvpClient.theme().secondary() : 1429423189);
       }
 
-      UiTypography.centered(graphics, "SPACE / ESC  SKIP", cx, h - s(26), -7562577, 0.8F * PvpClient.fontScale(), 1);
+      UiTypography.centered(graphics, "SPACE / ESC  SKIP", cx, h - s(26), -7562577, 0.8F * PvpClient.fontScale());
       super.extractRenderState(graphics, mouseX, mouseY, partialTick);
    }
 

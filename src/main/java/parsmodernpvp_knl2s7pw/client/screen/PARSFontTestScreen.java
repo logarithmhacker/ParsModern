@@ -42,9 +42,9 @@ public final class PARSFontTestScreen extends Screen {
       UiTypography.title(g, "PARS FONT LAB", left + s(24), top + s(20), PvpClient.theme().accent());
       UiTypography.text(g, "Vazirmatn-compatible Unicode run // live weight + scale", left + s(26), top + s(48), PvpClient.themeEngine().mutedText(), 0.68F, 0);
       int x = left + s(28);
-      PARSFontEngine.draw(g, "English typography preview", x, top + s(82), PvpClient.theme().text(), PARSFontEngine.Token.H1, true, false);
-      PARSFontEngine.draw(g, "فارسی زیبا و خوانا", x, top + s(122), PvpClient.theme().secondary(), PARSFontEngine.Token.H1, true, false);
-      PARSFontEngine.draw(g, "عربي: اختبار تشكيل الحروف", x, top + s(162), PvpClient.theme().text(), PARSFontEngine.Token.H2, false, false);
+      PARSFontEngine.draw(g, "English typography preview", x, top + s(82), PvpClient.theme().text(), PARSFontEngine.Token.TITLE, true, false);
+      PARSFontEngine.draw(g, "فارسی زیبا و خوانا", x, top + s(122), PvpClient.theme().secondary(), PARSFontEngine.Token.TITLE, true, false);
+      PARSFontEngine.draw(g, "عربي: اختبار تشكيل الحروف", x, top + s(162), PvpClient.theme().text(), PARSFontEngine.Token.HEADING, false, false);
       PARSFontEngine.draw(g, "123456789  0.42  +100  → ← ↑ ↓ ★ ✓", x, top + s(198), PvpClient.theme().accent(), PARSFontEngine.Token.NUMERIC, true, false);
       PARSFontEngine.draw(g, "PARS سلام 123  //  Mixed: فارسی + English + عربي", x, top + s(234), PvpClient.theme().text(), PARSFontEngine.Token.BODY, true, true);
       UiTypography.text(
