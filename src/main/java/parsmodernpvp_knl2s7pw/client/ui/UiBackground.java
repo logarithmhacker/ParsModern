@@ -44,7 +44,7 @@ public final class UiBackground {
       
       // Subtle vertical gradient
       int topColor = withAlpha(baseColor, opacity);
-      int bottomColor = withAlpha(mixColors(baseColor, 0x1A000000), opacity);
+      int bottomColor = withAlpha(mixColors(baseColor, 0x1A000000, 1.0F), opacity);
       
       // Draw gradient using horizontal strips
       int stripHeight = Math.max(1, height / 64);

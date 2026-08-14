@@ -9,6 +9,7 @@ import parsmodernpvp_knl2s7pw.client.PvpClient;
  */
 public final class UiScale {
    private static float cachedScale = -1.0F;
+   public static final float DEFAULT = 1.0F;
    
    private UiScale() {
    }

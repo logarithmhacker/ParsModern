@@ -72,7 +72,7 @@ public final class ParsLoadingScreen extends Screen {
       UiTypography.centered(
          graphics, "PARS MODERN PVP  //  " + this.minecraftVersion(), cx, panelTop + s(55), PvpClient.theme().text(), 0.82F * PvpClient.fontScale(), 1
       );
-      PARSFramework.progress(graphics, panelLeft + s(42), panelTop + s(91), panelWidth - s(84), progress);
+      PARSFramework.progress(graphics, panelLeft + s(42), panelTop + s(91), panelWidth - s(84), 8, progress);
       int stage = Math.min(STAGES.length - 1, (int)(progress * STAGES.length));
       UiTypography.centered(
          graphics, STAGES[stage] + "   " + Math.round(progress * 100.0F) + "%", cx, panelTop + s(112), PvpClient.theme().text(), 0.9F * PvpClient.fontScale(), 1

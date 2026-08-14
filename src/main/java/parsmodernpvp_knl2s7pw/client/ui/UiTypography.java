@@ -25,6 +25,13 @@ public final class UiTypography {
    }
 
    /**
+    * Renders centered title text.
+    */
+   public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
+      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, 1);
+   }
+
+   /**
     * Renders heading text (sub-section headers).
     */
    public static void heading(GuiGraphicsExtractor g, String text, int x, int y, int color) {
@@ -60,11 +67,27 @@ public final class UiTypography {
    }
 
    /**
+    * Renders label text (small muted text).
+    */
+   public static void label(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.65F, false);
+   }
+
+   /**
     * General purpose text rendering with scale control.
     */
    public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color, float scale, int alignment) {
       float adjustedScale = scale * PvpClient.fontScale();
       render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, adjustedScale, false);
+   }
+
+   /**
+    * Renders centered text with custom parameters.
+    */
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int alignment) {
+      float adjustedScale = scale * PvpClient.fontScale();
+      PARSFontEngine.Token token = getFontSizeToken(DesignTokens.FONT_SIZE_BASE * adjustedScale);
+      PARSFontEngine.centered(g, text, centerX, centerY, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
    }
 
    /**
