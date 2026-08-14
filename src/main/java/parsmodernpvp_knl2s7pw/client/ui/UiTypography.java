@@ -28,7 +28,7 @@ public final class UiTypography {
     * Renders centered title text.
     */
    public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
-      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, 1);
+      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL / DesignTokens.FONT_SIZE_BASE, 1);
    }
 
    /**
