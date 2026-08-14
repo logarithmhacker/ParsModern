@@ -69,8 +69,8 @@ public final class PARSFontEngine {
     */
    public enum Token {
       DISPLAY(1.15F, 0, FontEngine.Weight.PREMIUM),
-      H1(0.92F, 0, FontEngine.Weight.BOLD),
-      H2(0.8F, 0, FontEngine.Weight.SEMIBOLD),
+      TITLE(0.92F, 0, FontEngine.Weight.BOLD),
+      HEADING(0.8F, 0, FontEngine.Weight.SEMIBOLD),
       BODY(0.72F, 0, FontEngine.Weight.REGULAR),
       SMALL(0.65F, 0, FontEngine.Weight.MEDIUM),
       CAPTION(0.58F, 0, FontEngine.Weight.REGULAR),

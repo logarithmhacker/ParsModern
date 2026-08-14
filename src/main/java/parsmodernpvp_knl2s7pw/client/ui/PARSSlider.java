@@ -55,7 +55,7 @@ public final class PARSSlider {
          
          // Thumb body
          int thumbColor = -1;
-         fillRoundedRect(g, thumbX, thumbY, thumbSize, thumbSize, thumbSize / 2.0F, thumbColor);
+         fillRoundedRect(g, thumbX, thumbY, thumbSize, thumbSize, (int)(thumbSize / 2.0F), thumbColor);
       }
    }
    
