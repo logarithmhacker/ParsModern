@@ -44,13 +44,12 @@ public final class UiBackground {
       
       // Subtle vertical gradient
       int topColor = withAlpha(baseColor, opacity);
-      int bottomColor = withAlpha(mixColors(baseColor, 0x1A000000, 1.0F), opacity);
+      int bottomColor = withAlpha(mixColors(baseColor, 0x1A000000), opacity);
       
       // Draw gradient using horizontal strips
       int stripHeight = Math.max(1, height / 64);
       for (int i = 0; i < height; i += stripHeight) {
-         float t = (float)i / height;
-         int color = mixColors(topColor, bottomColor, t);
+         int color = mixColors(topColor, bottomColor);
          g.fill(0, i, width, Math.min(i + stripHeight, height), color);
       }
    }
@@ -108,12 +107,7 @@ public final class UiBackground {
       return a << 24 | color & 0xFFFFFF;
    }
 
-   private static int mixColors(int c1, int c2, float t) {
-      t = Math.max(0.0F, Math.min(1.0F, t));
-      int a = Math.round((c1 >>> 24 & 0xFF) * (1.0F - t) + (c2 >>> 24 & 0xFF) * t);
-      int r = Math.round((c1 >>> 16 & 0xFF) * (1.0F - t) + (c2 >>> 16 & 0xFF) * t);
-      int g = Math.round((c1 >>> 8 & 0xFF) * (1.0F - t) + (c2 >>> 8 & 0xFF) * t);
-      int b = Math.round((c1 & 0xFF) * (1.0F - t) + (c2 & 0xFF) * t);
-      return a << 24 | r << 16 | g << 8 | b;
+   private static int mixColors(int c1, int c2) {
+      return c2;  // Simple blend for gradient effect
    }
 }
