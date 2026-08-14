@@ -7,6 +7,6 @@ public final class PARSProgressBar {
    }
 
    public static void draw(GuiGraphicsExtractor g, int x, int y, int w, float value) {
-      PARSFramework.progress(g, x, y, w, value);
+      PARSFramework.progress(g, x, y, w, 8, value);
    }
 }
