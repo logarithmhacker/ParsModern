@@ -2,7 +2,7 @@
   "providers": [
     {
       "type": "ttf",
-      "file": "parsmodernpvp-knl2s7pw:vazirmatn.ttf",
+      "file": "parsmodernpvp-knl2s7pw:font/vazirmatn.ttf",
       "shift": [0, 0],
       "size": 11
     }
