@@ -14,49 +14,50 @@ public final class UiTypography {
     * Renders display text (largest, for main titles).
     */
    public static void display(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_3XL, 1.0F, true);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_3XL, 1.0F);
    }
 
    /**
     * Renders title text (section headers).
     */
    public static void title(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, true);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F);
    }
 
    /**
     * Renders centered title text.
     */
    public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
-      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL / DesignTokens.FONT_SIZE_BASE, 1);
+      float scale = DesignTokens.FONT_SIZE_2XL / (float)DesignTokens.FONT_SIZE_BASE;
+      centered(g, text, centerX, y, color, scale);
    }
 
    /**
     * Renders heading text (sub-section headers).
     */
    public static void heading(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_XL, 0.85F, false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_XL, 0.85F);
    }
 
    /**
     * Renders body text (standard content).
     */
    public static void body(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, PvpClient.fontScale(), false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, PvpClient.fontScale());
    }
 
    /**
     * Renders caption text (small descriptive text).
     */
    public static void caption(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.6F, false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.6F);
    }
 
    /**
     * Renders numeric/monospace text (values, stats).
     */
    public static void numeric(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, 0.75F, false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, 0.75F);
    }
 
    /**
@@ -70,21 +71,28 @@ public final class UiTypography {
     * Renders label text (small muted text).
     */
    public static void label(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.65F, false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.65F);
    }
 
    /**
     * General purpose text rendering with scale control.
     */
-   public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color, float scale, int alignment) {
+   public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color, float scale) {
       float adjustedScale = scale * PvpClient.fontScale();
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, adjustedScale, false);
+      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, adjustedScale);
    }
 
    /**
     * Renders centered text with custom parameters.
     */
-   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int alignment) {
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale) {
+      centered(g, text, centerX, centerY, color, scale, 1);
+   }
+
+   /**
+    * Renders centered text with custom parameters and weight.
+    */
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int weight) {
       float adjustedScale = scale * PvpClient.fontScale();
       PARSFontEngine.Token token = getFontSizeToken(DesignTokens.FONT_SIZE_BASE * adjustedScale);
       PARSFontEngine.centered(g, text, centerX, centerY, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
@@ -93,7 +101,7 @@ public final class UiTypography {
    /**
     * Core render method.
     */
-   private static void render(GuiGraphicsExtractor g, String text, int x, int y, int color, float baseSize, float scale, boolean bold) {
+   private static void render(GuiGraphicsExtractor g, String text, int x, int y, int color, float baseSize, float scale) {
       if (text == null || text.isEmpty()) return;
       
       PARSFontEngine.Token token = getFontSizeToken(baseSize * scale);
