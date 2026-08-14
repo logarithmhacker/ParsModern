@@ -28,7 +28,30 @@ public final class UiTypography {
     * Renders centered title text.
     */
    public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
-      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, 1);
+      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F);
+   }
+
+   /**
+    * Renders centered text with custom size and scale.
+    */
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float size, float scale) {
+      float adjustedScale = scale * PvpClient.fontScale();
+      PARSFontEngine.Token token = getFontSizeToken(size * adjustedScale);
+      PARSFontEngine.centered(g, text, centerX, centerY, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
+   }
+
+   /**
+    * Renders centered text with custom parameters.
+    */
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int alignment) {
+      centered(g, text, centerX, centerY, color, DesignTokens.FONT_SIZE_BASE, scale);
+   }
+
+   /**
+    * Renders centered text with size only (uses default scale).
+    */
+   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float size) {
+      centered(g, text, centerX, centerY, color, size, 1.0F);
    }
 
    /**
@@ -79,15 +102,6 @@ public final class UiTypography {
    public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color, float scale, int alignment) {
       float adjustedScale = scale * PvpClient.fontScale();
       render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, adjustedScale, false);
-   }
-
-   /**
-    * Renders centered text with custom parameters.
-    */
-   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int alignment) {
-      float adjustedScale = scale * PvpClient.fontScale();
-      PARSFontEngine.Token token = getFontSizeToken(DesignTokens.FONT_SIZE_BASE * adjustedScale);
-      PARSFontEngine.centered(g, text, centerX, centerY, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
    }
 
    /**
