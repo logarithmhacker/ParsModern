@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "parsmodernpvp_knl2s7pw.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [],
+  "client": [
+    "GuiMixin",
+    "ScreenMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}

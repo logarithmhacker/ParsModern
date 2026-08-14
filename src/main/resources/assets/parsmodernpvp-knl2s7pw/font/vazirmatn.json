@@ -1,0 +1,10 @@
+{
+  "providers": [
+    {
+      "type": "ttf",
+      "file": "parsmodernpvp-knl2s7pw:vazirmatn.ttf",
+      "shift": [0, 0],
+      "size": 11
+    }
+  ]
+}

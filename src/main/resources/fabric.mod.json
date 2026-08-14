@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "parsmodernpvp-knl2s7pw",
+  "version": "20.0.0",
+  "name": "PARSModernPvP",
+  "description": "A fair-play Modern PvP toolkit with customizable HUDs, profiles, neon UI, and combat awareness for every fighting style.",
+  "authors": [
+    "brother_habibi using CreativeMode.net"
+  ],
+  "contact": {
+    "homepage": "https://creativemode.net",
+    "sources": "https://creativemode.net/mod/parsmodernpvp-knl2s7pw"
+  },
+  "license": "ARR - CreativeMode.net/mod-license",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "parsmodernpvp_knl2s7pw.Parsmodernpvp"
+    ],
+    "client": [
+      "parsmodernpvp_knl2s7pw.ParsmodernpvpClient"
+    ]
+  },
+  "mixins": [
+    "parsmodernpvp.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~26.1",
+    "java": ">=25",
+    "fabric-api": "*"
+  },
+  "suggests": {},
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.homepage": "https://example.invalid/parsmodernpvp",
+        "modmenu.discord": "https://discord.gg/creativemode"
+      }
+    }
+  }
+}

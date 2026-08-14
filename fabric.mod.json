@@ -1,0 +1,47 @@
+{
+	"schemaVersion": 1,
+	"id": "parsmodernpvp",
+	"version": "${version}",
+	"name": "PARSModernPvP",
+	"description": "A fair-play Modern PvP toolkit with customizable HUDs, profiles, neon UI, and enhanced combat awareness for every fighting style.",
+	"authors": [
+		"brother_habibi"
+	],
+	"contact": {
+		"homepage": "https://creativemode.net",
+		"sources": "https://creativemode.net/mod/parsmodernpvp",
+		"issues": "https://creativemode.net/support"
+	},
+	"license": "All Rights Reserved",
+	"icon": "assets/parsmodernpvp/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.parsmodernpvp.Parsmodernpvp"
+		],
+		"client": [
+			"com.parsmodernpvp.ParsmodernpvpClient"
+		]
+	},
+	"mixins": [
+		"parsmodernpvp.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"fabric-api": ">=0.96.0",
+		"minecraft": "~1.26.1",
+		"java": ">=25"
+	},
+	"suggests": {
+		"modmenu": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.homepage": "https://creativemode.net/mod/parsmodernpvp",
+				"modmenu.discord": "https://discord.gg/creativemode",
+				"modmenu.issues": "https://creativemode.net/support"
+			}
+		}
+	}
+}

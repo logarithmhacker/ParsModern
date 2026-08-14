@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"minVersion": "0.8.5",
+	"package": "com.parsmodernpvp.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [],
+	"client": [
+		"GuiMixin",
+		"ScreenMixin",
+		"PlayerEntityMixin",
+		"EntityRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

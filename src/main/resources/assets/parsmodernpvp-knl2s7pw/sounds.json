@@ -1,0 +1,30 @@
+{
+    "pars_ui_sound_pack": {
+        "sounds": [
+            {
+                "name": "parsmodernpvp-knl2s7pw:pars_ui_sound_pack"
+            }
+        ]
+    },
+    "cinematic_startup": {
+        "sounds": [
+            {
+                "name": "parsmodernpvp-knl2s7pw:cinematic_startup"
+            }
+        ]
+    },
+    "ui_sound_suite": {
+        "sounds": [
+            {
+                "name": "parsmodernpvp-knl2s7pw:ui_sound_suite"
+            }
+        ]
+    },
+    "pars_intro_sting": {
+        "sounds": [
+            {
+                "name": "parsmodernpvp-knl2s7pw:pars_intro_sting"
+            }
+        ]
+    }
+}
