@@ -77,6 +77,13 @@ public final class PARSFramework {
    }
 
    /**
+    * Renders a premium card component with default styling (no hover/selected state).
+    */
+   public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height) {
+      card(g, x, y, width, height, false);
+   }
+
+   /**
     * Renders a premium card component with hover state support.
     */
    public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean selected) {

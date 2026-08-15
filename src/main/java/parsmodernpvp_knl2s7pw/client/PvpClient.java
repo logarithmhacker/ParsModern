@@ -28,7 +28,6 @@ import parsmodernpvp_knl2s7pw.client.performance.PerformanceMonitor;
 import parsmodernpvp_knl2s7pw.client.profile.Profile;
 import parsmodernpvp_knl2s7pw.client.profile.ProfileManager;
 import parsmodernpvp_knl2s7pw.client.resource.ResourceManager;
-import parsmodernpvp_knl2s7pw.client.screen.ParsLoadingScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsMainMenuScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsPauseScreen;
 import parsmodernpvp_knl2s7pw.client.screen.PvpScreen;
@@ -188,7 +187,7 @@ public final class PvpClient {
    private static void activateTitleScreen(Minecraft client) {
       if (!startupFlowShown && client.player == null && client.screen instanceof TitleScreen) {
          startupFlowShown = true;
-         client.setScreen(new ParsLoadingScreen(new ParsMainMenuScreen()));
+         client.setScreen(new ParsMainMenuScreen());
       }
    }
 
