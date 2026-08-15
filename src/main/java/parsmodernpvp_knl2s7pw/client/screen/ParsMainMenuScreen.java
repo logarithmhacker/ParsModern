@@ -10,24 +10,31 @@ import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
+import parsmodernpvp_knl2s7pw.client.ui.DesignTokens;
 import parsmodernpvp_knl2s7pw.client.ui.PARSFramework;
 import parsmodernpvp_knl2s7pw.client.ui.UiNotifications;
 import parsmodernpvp_knl2s7pw.client.ui.UiScale;
 import parsmodernpvp_knl2s7pw.client.ui.UiSoundEngine;
 import parsmodernpvp_knl2s7pw.client.ui.UiTypography;
 
+/**
+ * Premium Main Menu - PARS Modern PvP entry point.
+ * Features: Cinematic animations, responsive layout, profile integration, elegant navigation.
+ * Visual Identity: FAST | PREMIUM | COMPETITIVE | CLEAN | MODERN
+ */
 public final class ParsMainMenuScreen extends Screen {
    private final List<ParsMainMenuScreen.NavSpec> navigation = new ArrayList<>();
    private final long openedAt = System.nanoTime();
    private boolean announced;
+   private float animationProgress;
 
    public ParsMainMenuScreen() {
       super(Component.literal("PARSModernPvP"));
    }
 
-   /*
-    * Applies the central UI scale to a layout value.
-    */
+   /* =====================================================
+    * Responsive scaling helper
+    * ===================================================== */
    private static int s(int value) {
       return UiScale.s(value);
    }
@@ -43,24 +50,33 @@ public final class ParsMainMenuScreen extends Screen {
 
    protected void init() {
       this.navigation.clear();
+      this.animationProgress = 0.0F;
+      
       int center = this.width / 2;
       int left = Math.max(s(24), center - s(300));
       int top = Math.max(s(70), this.height / 2 - s(118));
-      this.addNav("PLAY", left, top, s(258), () -> this.minecraft.setScreen(new SelectWorldScreen(this)));
-      this.addNav("MULTIPLAYER", left, top + s(34), s(258), () -> this.minecraft.setScreen(new JoinMultiplayerScreen(this)));
-      this.addNav("PROFILES", left, top + s(68), s(258), () -> this.minecraft.setScreen(new PvpScreen("profiles")));
-      this.addNav("COSMETICS", left, top + s(102), s(258), () -> this.minecraft.setScreen(new PvpScreen("style")));
-      this.addNav("SETTINGS", left, top + s(136), s(258), () -> this.minecraft.setScreen(new PvpScreen("settings")));
-      this.addNav("QUIT", left, top + s(170), s(258), () -> this.minecraft.stop());
+      
+      // Primary navigation with clear hierarchy
+      this.addNav("PLAY", left, top, s(258), DesignTokens.RADIUS_LG, () -> this.minecraft.setScreen(new SelectWorldScreen(this)));
+      this.addNav("MULTIPLAYER", left, top + s(40), s(258), DesignTokens.RADIUS_LG, () -> this.minecraft.setScreen(new JoinMultiplayerScreen(this)));
+      
+      // Secondary navigation group
+      this.addNav("PROFILE", left, top + s(88), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("profiles")));
+      this.addNav("COSMETICS", left, top + s(132), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("style")));
+      this.addNav("SETTINGS", left, top + s(176), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("settings")));
+      
+      // Tertiary action
+      this.addNav("QUIT", left, top + s(220), s(258), DesignTokens.RADIUS_SM, () -> this.minecraft.stop());
+      
       if (!this.announced) {
          this.announced = true;
-         PvpClient.notifications().push("Cinematic interface online", 4500L);
+         PvpClient.notifications().push("PARS Client Ready", 3500L);
       }
    }
 
-   private void addNav(String label, int x, int y, int buttonWidth, Runnable action) {
-      int height = s(27);
-      this.navigation.add(new ParsMainMenuScreen.NavSpec(label, x, y, buttonWidth, height));
+   private void addNav(String label, int x, int y, int buttonWidth, float radius, Runnable action) {
+      int height = s(36);
+      this.navigation.add(new ParsMainMenuScreen.NavSpec(label, x, y, buttonWidth, height, radius));
       Button button = Button.builder(Component.empty(), ignored -> {
          UiSoundEngine.confirm();
          action.run();
@@ -135,6 +151,6 @@ public final class ParsMainMenuScreen extends Screen {
       UiTypography.text(graphics, value, x + s(86), y, color, 0.72F, 0);
    }
 
-   private record NavSpec(String label, int x, int y, int width, int height) {
+   private record NavSpec(String label, int x, int y, int width, int height, float radius) {
    }
 }

@@ -18,9 +18,17 @@ public final class UiNotifications {
       push(message, NotificationType.INFO);
    }
 
+   public static void push(String message, long durationMs) {
+      push(message, NotificationType.INFO, durationMs);
+   }
+
    public static void push(String message, NotificationType type) {
+      push(message, type, 3000L);
+   }
+   
+   public static void push(String message, NotificationType type, long durationMs) {
       shiftNotifications();
-      notifications[0] = new Notification(message, type, System.nanoTime());
+      notifications[0] = new Notification(message, type, System.nanoTime(), durationMs);
       UiSoundEngine.notification();
    }
 
@@ -116,15 +124,21 @@ public final class UiNotifications {
       final String message;
       final NotificationType type;
       final long created;
+      final long durationMs;
 
       Notification(String message, NotificationType type, long created) {
+         this(message, type, created, 3000L);
+      }
+      
+      Notification(String message, NotificationType type, long created, long durationMs) {
          this.message = message;
          this.type = type;
          this.created = created;
+         this.durationMs = durationMs;
       }
 
       boolean isExpired() {
-         return System.nanoTime() - created > 3000000000L;
+         return System.nanoTime() - created > durationMs * 1000000L;
       }
    }
 

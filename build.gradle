@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.17.19'
     id 'maven-publish'
 }
 
@@ -26,6 +26,8 @@ repositories {
 }
 
 loom {
+    // Disable generating sources with decompiler to save memory - use pre-compiled jars
+    runtimeOnlyLog4j = true
 }
 
 dependencies {
@@ -51,7 +53,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 	it.options.encoding = "UTF-8"
 	it.options.incremental = true
 }

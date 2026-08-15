@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
-import parsmodernpvp_knl2s7pw.client.screen.ParsLoadingScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsMainMenuScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsPauseScreen;
 import parsmodernpvp_knl2s7pw.client.screen.PvpScreen;
@@ -32,8 +31,7 @@ public abstract class ScreenMixin {
         float partialTick,
         CallbackInfo info
     ) {
-        if ((Object) this instanceof ParsLoadingScreen
-                || (Object) this instanceof ParsMainMenuScreen
+        if ((Object) this instanceof ParsMainMenuScreen
                 || (Object) this instanceof ParsPauseScreen
                 || (Object) this instanceof PvpScreen) {
             return;

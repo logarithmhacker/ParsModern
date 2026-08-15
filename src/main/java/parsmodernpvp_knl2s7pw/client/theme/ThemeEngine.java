@@ -1,5 +1,7 @@
 package parsmodernpvp_knl2s7pw.client.theme;
 
+import parsmodernpvp_knl2s7pw.client.ui.DesignTokens;
+
 public final class ThemeEngine {
    private Theme active = Theme.PARS_NEON;
    private Integer accentOverride;
@@ -72,8 +74,20 @@ public final class ThemeEngine {
       return this.color("mutedText");
    }
 
+   public int muted() {
+      return this.color("muted");
+   }
+
    public int border() {
       return this.color("border");
+   }
+
+   /**
+    * Returns a muted version of any color by reducing its opacity.
+    * Used for secondary text, disabled states, and subtle UI elements.
+    */
+   public int muted(int baseColor) {
+      return withAlpha(baseColor, DesignTokens.OPACITY_MUTED);
    }
 
    public void setTheme(String name) {
