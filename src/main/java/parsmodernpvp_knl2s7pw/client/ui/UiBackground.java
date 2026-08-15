@@ -2,118 +2,117 @@ package parsmodernpvp_knl2s7pw.client.ui;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
-import parsmodernpvp_knl2s7pw.client.animation.AnimationEngine;
 
 /**
- * Premium animated background renderer with glassmorphism effects.
+ * Quiet cinematic background for the PARS interface.
+ *
+ * The old background used a very visible full-screen grid and heavy blocks.
+ * This version keeps the tech identity but pushes it behind the content.
  */
 public final class UiBackground {
-   private static long startTime = System.nanoTime();
+    private static long startTime = System.nanoTime();
 
-   private UiBackground() {
-   }
+    private UiBackground() {
+    }
 
-   public static void render(GuiGraphicsExtractor g, int width, int height) {
-      render(g, width, height, PvpClient.backgroundOpacity());
-   }
+    public static void render(GuiGraphicsExtractor g, int width, int height) {
+        render(g, width, height, PvpClient.backgroundOpacity());
+    }
 
-   public static void render(GuiGraphicsExtractor g, int width, int height, float opacity) {
-      if (!PvpClient.initialized()) return;
+    public static void render(GuiGraphicsExtractor g, int width, int height, float opacity) {
+        if (!PvpClient.initialized()) {
+            return;
+        }
 
-      // Base gradient background
-      renderBaseGradient(g, width, height, opacity);
+        int background = PvpClient.themeEngine().color("background");
+        int accent = PvpClient.themeEngine().accent() & 0xFFFFFF;
+        int secondary = PvpClient.themeEngine().secondary() & 0xFFFFFF;
+        float strength = Math.max(0.0F, Math.min(1.0F, opacity));
 
-      // Animated overlay effects
-      if (PvpClient.animatedGradient() && !PvpClient.lowPerformance()) {
-         renderAnimatedOverlay(g, width, height);
-      }
+        g.fill(0, 0, width, height, background);
 
-      // Grid pattern for tech aesthetic
-      if (PvpClient.grid() && !PvpClient.lowPerformance()) {
-         renderGrid(g, width, height);
-      }
+        // Very soft vertical tonal shift.
+        int strips = Math.max(24, Math.min(64, height / 10));
+        for (int i = 0; i < strips; i++) {
+            float t = i / (float) Math.max(1, strips - 1);
+            int color = mix(background, 0x0BFFFFFF, t);
+            g.fill(0, i * height / strips, width, (i + 1) * height / strips + 1,
+                    withAlpha(color, 0.32F * strength));
+        }
 
-      // Vignette effect
-      if (PvpClient.vignette()) {
-         renderVignette(g, width, height);
-      }
-   }
+        if (PvpClient.animatedGradient() && !PvpClient.lowPerformance()) {
+            renderGlow(g, width, height, accent, secondary, strength);
+        }
 
-   private static void renderBaseGradient(GuiGraphicsExtractor g, int width, int height, float opacity) {
-      int baseColor = PvpClient.themeEngine().color("background");
-      
-      // Subtle vertical gradient
-      int topColor = withAlpha(baseColor, opacity);
-      int bottomColor = withAlpha(mixColors(baseColor, 0x1A000000, 1.0F), opacity);
-      
-      // Draw gradient using horizontal strips
-      int stripHeight = Math.max(1, height / 64);
-      for (int i = 0; i < height; i += stripHeight) {
-         float t = (float)i / height;
-         int color = mixColors(topColor, bottomColor, t);
-         g.fill(0, i, width, Math.min(i + stripHeight, height), color);
-      }
-   }
+        // The grid is intentionally tiny and faint. It should be texture,
+        // not the first thing the eye sees.
+        if (PvpClient.grid() && !PvpClient.lowPerformance()) {
+            renderGrid(g, width, height);
+        }
 
-   private static void renderAnimatedOverlay(GuiGraphicsExtractor g, int width, int height) {
-      long elapsed = System.nanoTime() - startTime;
-      float time = (float)(elapsed / 1.0E9) * PvpClient.animationSpeed();
-      
-      int accent = PvpClient.themeEngine().accent() & 0xFFFFFF;
-      int secondary = PvpClient.themeEngine().secondary() & 0xFFFFFF;
-      
-      // Slow moving gradient bands
-      int bandHeight = 80;
-      int offset = (int)(time * 20.0F) % (height + bandHeight) - bandHeight;
-      
-      for (int i = 0; i < 3; i++) {
-         int y = offset + i * (height / 3);
-         int alpha = 8 + (int)(4.0F * Math.sin(time * 0.5F + i));
-         int color = (i % 2 == 0 ? accent : secondary) | alpha << 24;
-         g.fill(0, y, width, y + bandHeight / 4, color);
-      }
-   }
+        if (PvpClient.vignette()) {
+            renderVignette(g, width, height);
+        }
 
-   private static void renderGrid(GuiGraphicsExtractor g, int width, int height) {
-      int gridSize = 48;
-      int gridColor = 0x0DFFFFFF;
-      
-      // Vertical lines
-      for (int x = 0; x < width; x += gridSize) {
-         g.fill(x, 0, x + 1, height, gridColor);
-      }
-      
-      // Horizontal lines
-      for (int y = 0; y < height; y += gridSize) {
-         g.fill(0, y, width, y + 1, gridColor);
-      }
-   }
+        // A clean one-pixel frame finishes the screen without visual noise.
+        g.fill(0, 0, width, 1, withAlpha(0xFFFFFFFF, 0.05F));
+        g.fill(0, height - 1, width, height, withAlpha(0x000000, 0.22F));
+    }
 
-   private static void renderVignette(GuiGraphicsExtractor g, int width, int height) {
-      int vignetteSize = Math.min(width, height) / 3;
-      int vignetteColor = 0x40000000;
-      
-      // Top edge
-      g.fill(0, 0, width, vignetteSize / 2, vignetteColor);
-      // Bottom edge
-      g.fill(0, height - vignetteSize / 2, width, height, vignetteColor);
-      // Left edge
-      g.fill(0, 0, vignetteSize / 2, height, vignetteColor);
-      // Right edge
-      g.fill(width - vignetteSize / 2, 0, width, height, vignetteColor);
-   }
+    private static void renderGlow(GuiGraphicsExtractor g, int width, int height,
+                                   int accent, int secondary, float strength) {
+        long elapsed = System.nanoTime() - startTime;
+        float speed = Math.max(0.1F, PvpClient.animationSpeed());
+        float time = elapsed / 1.0E9F * speed;
 
-   private static int withAlpha(int color, float alpha) {
-      int a = Math.max(0, Math.min(255, Math.round((color >>> 24 & 0xFF) * alpha)));
-      return a << 24 | color & 0xFFFFFF;
-   }
+        int centerX = (int) (width * (0.50F + 0.16F * (float) Math.sin(time * 0.11F)));
+        int centerY = (int) (height * (0.34F + 0.10F * (float) Math.cos(time * 0.09F)));
 
-   private static int mixColors(int c1, int c2, float t) {
-      t = Math.max(0.0F, Math.min(1.0F, t));
-      int a = Math.round((c1 >>> 24 & 0xFF) * (1.0F - t) + (c2 >>> 24 & 0xFF) * t);
-      int r = Math.round((c1 >>> 16 & 0xFF) * (1.0F - t) + (c2 >>> 16 & 0xFF) * t);
-      int g = Math.round((c1 >>> 8 & 0xFF) * (1.0F - t) + (c2 >>> 8 & 0xFF) * t);
-      int b = Math.round((c1 & 0xFF) * (1.0F - t) + (c2 & 0xFF) * t);
-      return a << 24 | r << 16 | g << 8 | b;
-   }
+        // Rectangle-based bloom: several soft, transparent layers.
+        int[] sizes = {260, 190, 125, 70};
+        float[] alpha = {0.018F, 0.024F, 0.032F, 0.045F};
+        for (int i = 0; i < sizes.length; i++) {
+            int size = sizes[i];
+            int color = i % 2 == 0 ? accent : secondary;
+            g.fill(centerX - size, centerY - size / 2,
+                    centerX + size, centerY + size / 2,
+                    withAlpha(color, alpha[i] * strength));
+        }
+    }
+
+    private static void renderGrid(GuiGraphicsExtractor g, int width, int height) {
+        int size = 64;
+        int line = withAlpha(PvpClient.themeEngine().accent(), 0.045F);
+
+        for (int x = size; x < width; x += size) {
+            g.fill(x, 0, x + 1, height, line);
+        }
+        for (int y = size; y < height; y += size) {
+            g.fill(0, y, width, y + 1, line);
+        }
+    }
+
+    private static void renderVignette(GuiGraphicsExtractor g, int width, int height) {
+        int edgeX = Math.max(18, width / 12);
+        int edgeY = Math.max(18, height / 12);
+        int color = 0x22000000;
+
+        g.fill(0, 0, width, edgeY, color);
+        g.fill(0, height - edgeY, width, height, color);
+        g.fill(0, 0, edgeX, height, color);
+        g.fill(width - edgeX, 0, width, height, color);
+    }
+
+    private static int mix(int first, int second, float t) {
+        t = Math.max(0.0F, Math.min(1.0F, t));
+        int a = Math.round(((first >>> 24) & 0xFF) * (1.0F - t) + ((second >>> 24) & 0xFF) * t);
+        int r = Math.round(((first >>> 16) & 0xFF) * (1.0F - t) + ((second >>> 16) & 0xFF) * t);
+        int g = Math.round(((first >>> 8) & 0xFF) * (1.0F - t) + ((second >>> 8) & 0xFF) * t);
+        int b = Math.round((first & 0xFF) * (1.0F - t) + (second & 0xFF) * t);
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    private static int withAlpha(int color, float alpha) {
+        return ((Math.max(0, Math.min(255, Math.round(alpha * 255.0F)))) << 24) | (color & 0xFFFFFF);
+    }
 }

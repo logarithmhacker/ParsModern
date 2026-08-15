@@ -1,0 +1,803 @@
+You are working on my Minecraft Fabric client project:
+
+PARSModernPvP
+Minecraft: 26.1.2
+Fabric Loader: 0.19.3
+Fabric API: 0.155.2+26.1.2
+Java: 25
+Fabric Loom: 1.17-SNAPSHOT / 1.17.19 resolved
+
+PROJECT GOAL:
+Transform the entire PARSModernPvP client UI and cosmetic system into a genuinely polished, production-quality PvP client experience.
+
+IMPORTANT:
+Do NOT just cosmetically modify existing broken code.
+Do NOT patch random lines until compilation succeeds.
+Do NOT create fake placeholder rectangles and call them "3D cosmetics".
+Do NOT use fake dots/particles as a substitute for actual cosmetic rendering.
+Do NOT introduce fragile Minecraft API hacks that crash at runtime.
+Do NOT invent nonexistent Minecraft 26.1.2 APIs.
+Do NOT downgrade Minecraft/Fabric versions.
+Do NOT break the existing Vazirmatn font engine.
+Do NOT remove existing working functionality.
+
+FIRST:
+Perform a complete repository audit.
+
+Inspect:
+- PvpClient.java
+- ParsMainMenuScreen.java
+- ParsProfileScreen.java
+- ParsCosmeticsScreen.java
+- PvpScreen.java
+- ParsSettingsScreen.java
+- ParsPauseScreen.java
+- HudRenderer.java
+- HudLayout.java
+- Profile.java
+- ProfileManager.java
+- Cosmetic.java
+- CosmeticType.java
+- CosmeticsManager.java
+- CosmeticsWorldEffects.java
+- Rarity.java
+- DesignTokens.java
+- UiScale.java
+- UiTypography.java
+- PARSFontEngine.java
+- FontEngine.java
+- PARSFramework.java
+- UiSoundEngine.java
+- Theme.java
+- ThemeEngine.java
+- animation systems
+- config/persistence systems
+- all HUD classes
+- all cosmetics rendering classes
+- all related Mixins/events/render hooks
+
+Also inspect build.gradle, gradle.properties, fabric.mod.json and resources.
+
+Do NOT make changes until you understand the current architecture.
+
+--------------------------------------------------
+PHASE 1 — STABILIZE THE PROJECT
+--------------------------------------------------
+
+The project must remain compatible with:
+
+Minecraft 26.1.2
+Fabric Loader 0.19.3
+Fabric API 0.155.2+26.1.2
+Java 25
+
+Run:
+./gradlew clean compileJava
+
+Fix compile errors properly.
+
+Then:
+./gradlew runClient
+
+Fix actual runtime crashes from root cause.
+
+Do not stop at compilation.
+Runtime behavior matters.
+
+Every major change must be followed by:
+- compileJava
+- runtime validation
+- crash analysis if necessary
+
+--------------------------------------------------
+PHASE 2 — COSMETICS ARCHITECTURE REBUILD
+--------------------------------------------------
+
+The current cosmetic implementation is unacceptable if it only displays:
+- rectangles
+- icons
+- dots
+- random particles
+- ItemStack hacks
+- fake preview placeholders
+
+Build a real cosmetic architecture.
+
+Create a clean separation:
+
+CosmeticDefinition
+CosmeticState
+CosmeticRenderer
+CosmeticPreviewRenderer
+CosmeticWorldRenderer
+CosmeticsManager
+CosmeticRegistry
+
+Each cosmetic must have:
+- id
+- display name
+- category
+- rarity
+- description
+- unlock state
+- equipped state
+- favorite state
+- animation support
+- renderer type
+- preview support
+- world rendering support
+
+The architecture must support future cosmetics without editing giant switch statements everywhere.
+
+--------------------------------------------------
+PHASE 3 — TRUE 3D COSMETIC PREVIEW
+--------------------------------------------------
+
+The Cosmetics GUI must contain a REAL animated 3D player preview.
+
+Requirements:
+
+1. Render the actual Minecraft player/entity model.
+2. Show the player's current skin.
+3. Render equipped cosmetic layers around/on the player.
+4. Preview the currently selected cosmetic even before equipping it.
+5. Allow smooth preview rotation.
+6. Allow mouse drag rotation.
+7. Add subtle idle animation.
+8. Add rarity-specific glow.
+9. Add animated lighting/highlight effect.
+10. Add proper depth and shadows.
+11. Never use fake rectangles as the player model.
+12. Never use dots as the cosmetic representation.
+13. Never construct unsafe ItemStacks merely to fake cosmetic previews.
+14. Never crash because registry components are not bound.
+15. Use Minecraft 26.1.2's actual rendering pipeline safely.
+
+The preview must look like a real PvP client's cosmetic preview.
+
+Use real entity rendering APIs available in Minecraft 26.1.2.
+Inspect mappings in the actual project before implementing.
+
+If an API differs from older versions:
+DO NOT guess.
+Inspect the actual mapped methods/classes used by this project.
+
+--------------------------------------------------
+PHASE 4 — REAL COSMETICS
+--------------------------------------------------
+
+Build real visual cosmetic effects.
+
+Examples:
+
+CAPES
+- actual cape-style geometry/layer
+- animated cloth movement
+- subtle idle sway
+- rarity-specific material treatment
+
+WINGS
+- actual 3D wing geometry
+- left/right symmetrical model
+- idle breathing motion
+- smooth flap animation
+- rarity-specific glow
+- proper attachment to player back
+
+HALOS
+- real ring geometry
+- rotation
+- bobbing
+- glow
+- multiple visual tiers
+
+HATS
+- actual 3D geometry attached to player head
+- correct head rotation
+- idle animation when applicable
+
+AURAS
+- layered 3D effects around player
+- not just a flat particle spam
+- animated orbit paths
+- controlled performance
+
+TRAILS
+- actual world-following effect
+- smooth interpolation
+- configurable density
+- optimized particle usage
+
+BADGES
+- 3D or world-space visual treatment where appropriate
+
+EMOTES / EFFECTS
+- animation-ready architecture
+
+At least several cosmetics should have genuinely different render implementations.
+
+Do NOT make every cosmetic use the same particle renderer with a different color.
+
+--------------------------------------------------
+PHASE 5 — REAL WORLD COSMETIC RENDERING
+--------------------------------------------------
+
+Equipped cosmetics must visibly appear on the player in-game.
+
+Not only inside the GUI.
+
+The rendering must:
+- follow player position
+- follow player rotation
+- follow body/head bones or equivalent model transforms
+- interpolate smoothly
+- work in first/third person according to configuration
+- avoid z-fighting
+- avoid duplicate rendering
+- respect reduced motion settings
+- respect cosmetic visibility settings
+- remain performant
+
+Use a dedicated rendering hook/layer/event that is appropriate for Fabric + Minecraft 26.1.2.
+
+Do NOT fake world cosmetics through GUI overlays.
+
+--------------------------------------------------
+PHASE 6 — COSMETICS GUI REBUILD
+--------------------------------------------------
+
+Rebuild ParsCosmeticsScreen from the ground up if necessary.
+
+Layout:
+
+LEFT:
+- cosmetic categories
+- rarity/favorite/unlocked filters
+- clean compact navigation
+
+CENTER:
+- cosmetic cards
+- real hover animations
+- equipped badges
+- rarity indicators
+- clean text hierarchy
+- smooth scrolling
+
+RIGHT:
+- REAL 3D player preview
+- selected cosmetic preview
+- cosmetic name
+- rarity
+- description
+- unlock status
+- equip/unequip button
+- favorite button
+- animation preview controls where applicable
+
+Add:
+- search
+- categories
+- favorites
+- owned
+- equipped
+- rarity filter
+- smooth hover
+- keyboard navigation
+- mouse navigation
+- clear selected state
+
+No text overlap.
+No content leaving the screen.
+No giant dead spaces.
+No tiny unreadable labels.
+
+Responsive layout must work at:
+- 1920x1080
+- 1920x991
+- 1600x900
+- 1280x720
+- Minecraft GUI scale changes
+
+--------------------------------------------------
+PHASE 7 — EQUIP SYSTEM
+--------------------------------------------------
+
+Equip MUST actually work.
+
+When clicking EQUIP:
+
+1. update CosmeticState
+2. update CosmeticsManager
+3. save configuration
+4. update preview immediately
+5. update world rendering immediately
+6. show notification
+7. play PARS sound
+8. update button state without reopening screen
+
+UNEQUIP must do the same.
+
+Only one conflicting cosmetic may be active per exclusive slot/category if appropriate.
+
+Support:
+- equip
+- unequip
+- favorite
+- unfavorite
+- preview
+- unlock
+- lock
+- persistence
+
+--------------------------------------------------
+PHASE 8 — PROFILE SYSTEM REBUILD
+--------------------------------------------------
+
+Rebuild ParsProfileScreen.
+
+The profile screen must look like a serious PvP client profile.
+
+Header:
+- real username
+- real UUID-derived/player identity
+- animated player model
+- current rank/profile
+- session state
+
+Tabs:
+- Overview
+- Statistics
+- Cosmetics
+- Achievements
+- Performance
+
+Statistics must NOT invent nonsense values.
+
+Separate:
+- real Minecraft stats
+- client session stats
+- mock/demo stats
+
+Never show fake data as real.
+
+Add visual cards:
+- play time
+- kills
+- deaths
+- K/D
+- wins
+- losses
+- blocks broken
+- distance
+- sessions
+- performance
+
+Use proper number formatting.
+
+Add profile card with:
+- username
+- skin
+- selected cosmetics
+- current profile
+- active state
+
+Everything aligned and responsive.
+
+--------------------------------------------------
+PHASE 9 — RIGHT SHIFT GUI REBUILD
+--------------------------------------------------
+
+The Right Shift interface must become a polished unified control center.
+
+Current behavior is messy.
+
+Rebuild the entire navigation.
+
+Structure:
+
+HEADER
+PARS logo/name
+current player
+active profile
+quick actions
+
+SIDEBAR
+Modules
+HUD Editor
+Profiles
+Style
+Settings
+
+CONTENT
+
+MODULES:
+- searchable module list
+- categories
+- enabled state
+- keybind
+- description
+- smooth toggle
+
+HUD EDITOR:
+- real canvas
+- safe-area guides
+- grid
+- selected element highlight
+- drag
+- resize
+- scale
+- snapping
+- reset
+- presets
+- profile save
+- profile load
+- proper coordinates
+
+PROFILES:
+- profile cards
+- active profile
+- create
+- duplicate
+- rename
+- delete
+- activate
+- cosmetic configuration
+- HUD configuration
+- module configuration
+- style configuration
+
+STYLE:
+- theme
+- accent
+- background opacity
+- panel opacity
+- corner radius
+- animation speed
+- font scale
+- UI scale
+- reduced motion
+
+SETTINGS:
+Include actual Minecraft-native settings where appropriate.
+
+Have a clear "Minecraft Settings" entry which opens the REAL Minecraft options screen.
+
+Separate:
+PARS settings
+from
+Minecraft settings
+
+Do NOT create fake controls for settings that already belong to Minecraft.
+
+--------------------------------------------------
+PHASE 10 — HUD EDITOR
+--------------------------------------------------
+
+HUD Editor must actually work.
+
+Elements:
+- FPS
+- CPS
+- Ping
+- Coordinates
+- Keystrokes
+- Armor
+- Potions
+- Combo
+- Session stats
+- module indicators
+
+Each element:
+- selectable
+- draggable
+- scalable
+- snap-able
+- hideable
+- resettable
+
+Mouse dragging must be smooth.
+
+No delayed movement.
+No "I drag it and it moves somewhere else".
+No coordinate-space mismatch.
+
+Use actual screen-space to HUD-space transforms.
+
+Provide:
+- grid snap
+- center snap
+- edge snap
+- safe zone
+- reset layout
+- default preset
+
+"Default" must mean the default PARS HUD preset.
+But Minecraft Settings must remain actual Minecraft settings.
+
+--------------------------------------------------
+PHASE 11 — SOUND SYSTEM
+--------------------------------------------------
+
+Use actual PARS UI sounds when available.
+
+Sound categories:
+- hover
+- click
+- open
+- close
+- back
+- equip
+- unequip
+- notification
+- profile switch
+- slider
+- toggle
+- confirm
+- error
+- transition
+
+Do not replace all PARS sounds with vanilla click sounds.
+
+Build a safe fallback:
+PARS sound → fallback vanilla sound
+
+Never crash if sound assets are missing.
+
+Respect:
+- master volume
+- UI volume
+- notifications volume
+- muted state
+
+--------------------------------------------------
+PHASE 12 — ANIMATION SYSTEM
+--------------------------------------------------
+
+Use consistent animation architecture.
+
+Animations:
+- screen transitions
+- hover
+- buttons
+- cards
+- tabs
+- cosmetic preview
+- cosmetic world effects
+- HUD elements
+- profile switching
+- notification toasts
+
+Use interpolation/easing.
+
+Avoid excessive animation.
+Respect reduced motion.
+
+--------------------------------------------------
+PHASE 13 — DESIGN SYSTEM
+--------------------------------------------------
+
+Centralize:
+
+spacing
+radii
+colors
+shadows
+opacity
+typography
+animation timing
+
+Use the existing DesignTokens and UiScale architecture.
+
+Do not scatter raw magic numbers everywhere.
+
+Vazirmatn must remain:
+- crisp
+- readable
+- properly scaled
+- Persian-safe
+- UTF-8-safe
+
+--------------------------------------------------
+PHASE 14 — VISUAL QUALITY BAR
+--------------------------------------------------
+
+Target:
+
+Lunar/Badlion-level usability and polish,
+but with a completely original PARS visual identity.
+
+The UI must feel:
+- premium
+- clean
+- compact
+- deliberate
+- responsive
+- modern
+- animated
+- readable
+
+Avoid:
+- giant empty cards
+- random rectangles
+- excessive borders
+- unreadable gray text
+- inconsistent spacing
+- duplicate buttons
+- overlapping panels
+- fake 3D elements
+- placeholder UI
+- accidental debug labels
+- mojibake
+- cropped content
+
+--------------------------------------------------
+PHASE 15 — ESC / NAVIGATION
+--------------------------------------------------
+
+Navigation must be predictable.
+
+ROOT PARS MAIN MENU:
+ESC must NOT return to vanilla menu.
+
+INTERNAL PARS SCREENS:
+ESC should return to PARS Main Menu.
+
+IN-GAME:
+ESC should preserve Minecraft pause behavior unless intentionally intercepted.
+
+No screen loops.
+No duplicate startup screens.
+No screen fighting between FancyMenu/Reimagined Intro/PARS.
+
+--------------------------------------------------
+PHASE 16 — ERROR SAFETY
+--------------------------------------------------
+
+Every render path must be defensive.
+
+No crash from:
+- missing assets
+- missing sound
+- null player
+- unavailable skin
+- unavailable registry component
+- missing cosmetic
+- missing profile
+- partially initialized Minecraft client
+- resource reload
+- GUI scale change
+
+Do not hide exceptions blindly.
+Log useful information with the PARS logger.
+
+--------------------------------------------------
+PHASE 17 — DATA / PERSISTENCE
+--------------------------------------------------
+
+Cosmetic and profile state must survive:
+- screen closing
+- world join
+- world leave
+- client restart
+
+Use existing ConfigManager where possible.
+
+Do not create multiple competing config systems.
+
+--------------------------------------------------
+PHASE 18 — CLEANUP
+--------------------------------------------------
+
+Remove obsolete code from previous failed iterations.
+
+Especially remove:
+- fake cosmetic rectangles
+- fake cosmetic dots
+- unsafe ItemStack preview hacks
+- duplicate cosmetic preview methods
+- unused imports
+- duplicate ESC handlers
+- duplicate sound engines
+- deprecated temporary classes
+- dead code
+- conflicting HUD editors
+- conflicting Right Shift screens
+
+Do not leave two implementations of the same feature.
+
+--------------------------------------------------
+PHASE 19 — TESTING
+--------------------------------------------------
+
+Test all of these:
+
+1. Start client
+2. Main Menu
+3. Open Profile
+4. Open Cosmetics
+5. Select cosmetic
+6. Preview cosmetic
+7. Equip cosmetic
+8. Unequip cosmetic
+9. Favorite cosmetic
+10. Close Cosmetics with ESC
+11. Reopen Cosmetics
+12. Enter world
+13. Verify equipped cosmetic appears on player
+14. Open Right Shift
+15. Open HUD Editor
+16. Drag HUD element
+17. Resize HUD element
+18. Save profile
+19. Switch profile
+20. Open Settings
+21. Open Minecraft Settings
+22. Return to PARS
+23. Change GUI scale
+24. Test different resolutions
+25. Test resource reload
+26. Test client restart
+27. Test reduced motion
+28. Test missing cosmetic asset fallback
+
+--------------------------------------------------
+PHASE 20 — BUILD VALIDATION
+--------------------------------------------------
+
+Run:
+
+./gradlew clean compileJava
+
+Then:
+
+./gradlew runClient
+
+Do not claim success unless the project actually builds and launches.
+
+If runtime crashes:
+read the crash report
+identify the FIRST meaningful PARS stack frame
+fix the root cause
+rerun
+
+--------------------------------------------------
+CRITICAL IMPLEMENTATION RULE
+--------------------------------------------------
+
+Do not take shortcuts just to make compilation succeed.
+
+I explicitly want:
+
+REAL COSMETICS
+REAL 3D PREVIEW
+REAL ANIMATED COSMETICS
+REAL EQUIP/UNEQUIP
+REAL WORLD RENDERING
+REAL HUD EDITOR
+REAL PROFILE SYSTEM
+REAL SETTINGS
+REAL RIGHT SHIFT ORGANIZATION
+
+Not:
+fake rectangles
+fake dots
+fake particles pretending to be cosmetics
+placeholder previews
+fake data presented as real
+temporary hacks
+
+Before changing code, inspect the whole project.
+After changing code, validate the entire system.
+
+When you finish, provide:
+1. files changed
+2. architecture changes
+3. cosmetics implemented
+4. Right Shift improvements
+5. HUD improvements
+6. profile improvements
+7. sound improvements
+8. validation results
+9. remaining limitations, if any
+
+Do not say "done" unless it is actually tested.

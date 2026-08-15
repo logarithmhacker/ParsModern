@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -45,6 +46,13 @@ public final class FontEngine {
      */
     private static final FontDescription FONT_DESCRIPTION =
             new FontDescription.Resource(FONT_ID);
+
+    /* ASCII numerals use the vanilla font definition. This avoids replacement
+       boxes on HUD/stat numbers while leaving labels and words on Vazirmatn. */
+    private static final FontDescription DEFAULT_FONT_DESCRIPTION =
+            new FontDescription.Resource(
+                    Identifier.fromNamespaceAndPath("minecraft", "default")
+            );
 
     /*
      * Actual TTF resource.
@@ -190,15 +198,29 @@ public final class FontEngine {
 
         return TEXT_CACHE.computeIfAbsent(
                 key,
-                ignored ->
-                        Component.literal(text)
-                                .withStyle(
-                                        style ->
-                                                style.withFont(
-                                                        FONT_DESCRIPTION
-                                                )
-                                )
+                ignored -> buildMixedFontComponent(text)
         );
+    }
+
+    private static Component buildMixedFontComponent(String text) {
+        MutableComponent root = Component.empty();
+
+        for (int i = 0; i < text.length();) {
+            int codePoint = text.codePointAt(i);
+            int count = Character.charCount(codePoint);
+            String glyph = new String(Character.toChars(codePoint));
+            boolean digit = codePoint >= '0' && codePoint <= '9';
+            FontDescription font = digit ? DEFAULT_FONT_DESCRIPTION : FONT_DESCRIPTION;
+
+            root.append(
+                    Component.literal(glyph)
+                            .withStyle(style -> style.withFont(font))
+            );
+
+            i += count;
+        }
+
+        return root;
     }
 
     /**

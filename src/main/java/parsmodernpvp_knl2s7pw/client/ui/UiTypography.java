@@ -3,133 +3,124 @@ package parsmodernpvp_knl2s7pw.client.ui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
 
-/**
- * Premium typography system with consistent hierarchy and Vazirmatn font integration.
- */
+/** Consistent PARS text hierarchy and alignment helpers. */
 public final class UiTypography {
-   private UiTypography() {
-   }
+    private UiTypography() {
+    }
 
-   /**
-    * Renders display text (largest, for main titles).
-    */
-   public static void display(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_3XL, 1.0F, true);
-   }
+    public static void display(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_3XL, 1.0F, true);
+    }
 
-   /**
-    * Renders title text (section headers).
-    */
-   public static void title(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, true);
-   }
+    public static void title(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, true);
+    }
 
-   /**
-    * Renders centered title text.
-    */
-   public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
-      centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F, 1);
-   }
+    public static void centeredTitle(GuiGraphicsExtractor g, String text, int centerX, int y, int color) {
+        centered(g, text, centerX, y, color, DesignTokens.FONT_SIZE_2XL, 0.95F);
+    }
 
-   /**
-    * Renders heading text (sub-section headers).
-    */
-   public static void heading(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_XL, 0.85F, false);
-   }
+    public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY,
+                                int color, float size, float scale) {
+        PARSFontEngine.Token token = getFontSizeToken(size * scale);
+        PARSFontEngine.centered(
+                g,
+                text,
+                centerX,
+                centerY,
+                color,
+                token,
+                PvpClient.shadow() && !PvpClient.lowPerformance(),
+                false
+        );
+    }
 
-   /**
-    * Renders body text (standard content).
-    */
-   public static void body(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, PvpClient.fontScale(), false);
-   }
+    public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY,
+                                int color, float scale, int alignment) {
+        centered(g, text, centerX, centerY, color, DesignTokens.FONT_SIZE_BASE, scale);
+    }
 
-   /**
-    * Renders caption text (small descriptive text).
-    */
-   public static void caption(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.6F, false);
-   }
+    public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY,
+                                int color, float size) {
+        centered(g, text, centerX, centerY, color, size, 1.0F);
+    }
 
-   /**
-    * Renders numeric/monospace text (values, stats).
-    */
-   public static void numeric(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, 0.75F, false);
-   }
+    public static void heading(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_XL, 0.85F, false);
+    }
 
-   /**
-    * Renders button text.
-    */
-   public static void button(GuiGraphicsExtractor g, String text, int x, int y, int width, int height, int color) {
-      PARSFontEngine.centered(g, text, x + width / 2, y + height / 2, color, PARSFontEngine.Token.SMALL, PvpClient.shadow(), false);
-   }
+    public static void body(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, 1.0F, false);
+    }
 
-   /**
-    * Renders label text (small muted text).
-    */
-   public static void label(GuiGraphicsExtractor g, String text, int x, int y, int color) {
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.65F, false);
-   }
+    public static void caption(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.72F, false);
+    }
 
-   /**
-    * General purpose text rendering with scale control.
-    */
-   public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color, float scale, int alignment) {
-      float adjustedScale = scale * PvpClient.fontScale();
-      render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, adjustedScale, false);
-   }
+    public static void numeric(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, 0.82F, false);
+    }
 
-   /**
-    * Renders centered text with custom parameters.
-    */
-   public static void centered(GuiGraphicsExtractor g, String text, int centerX, int centerY, int color, float scale, int alignment) {
-      float adjustedScale = scale * PvpClient.fontScale();
-      PARSFontEngine.Token token = getFontSizeToken(DesignTokens.FONT_SIZE_BASE * adjustedScale);
-      PARSFontEngine.centered(g, text, centerX, centerY, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
-   }
+    public static void button(GuiGraphicsExtractor g, String text, int x, int y,
+                              int width, int height, int color) {
+        PARSFontEngine.centered(
+                g,
+                text,
+                x + width / 2,
+                y + height / 2,
+                color,
+                PARSFontEngine.Token.SMALL,
+                PvpClient.shadow(),
+                false
+        );
+    }
 
-   /**
-    * Core render method.
-    */
-   private static void render(GuiGraphicsExtractor g, String text, int x, int y, int color, float baseSize, float scale, boolean bold) {
-      if (text == null || text.isEmpty()) return;
-      
-      PARSFontEngine.Token token = getFontSizeToken(baseSize * scale);
-      PARSFontEngine.draw(g, text, x, y, color, token, PvpClient.shadow() && !PvpClient.lowPerformance(), false);
-   }
+    public static void label(GuiGraphicsExtractor g, String text, int x, int y, int color) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_SM, 0.78F, false);
+    }
 
-   /**
-    * Gets appropriate font token based on size.
-    */
-   private static PARSFontEngine.Token getFontSizeToken(float size) {
-      if (size >= 24.0F) return PARSFontEngine.Token.DISPLAY;
-      if (size >= 18.0F) return PARSFontEngine.Token.TITLE;
-      if (size >= 14.0F) return PARSFontEngine.Token.HEADING;
-      if (size >= 11.0F) return PARSFontEngine.Token.BODY;
-      if (size >= 9.0F) return PARSFontEngine.Token.SMALL;
-      return PARSFontEngine.Token.CAPTION;
-   }
+    public static void text(GuiGraphicsExtractor g, String text, int x, int y, int color,
+                            float scale, int alignment) {
+        render(g, text, x, y, color, DesignTokens.FONT_SIZE_BASE, scale, false);
+    }
 
-   /**
-    * Returns muted text color.
-    */
-   public static int mutedColor() {
-      return -8220248;
-   }
+    private static void render(GuiGraphicsExtractor g, String text, int x, int y, int color,
+                               float baseSize, float scale, boolean bold) {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
 
-   /**
-    * Returns secondary text color.
-    */
-   public static int secondaryColor() {
-      return PvpClient.themeEngine().secondary();
-   }
+        PARSFontEngine.Token token = getFontSizeToken(baseSize * scale);
+        PARSFontEngine.draw(
+                g,
+                text,
+                x,
+                y,
+                color,
+                token,
+                PvpClient.shadow() && !PvpClient.lowPerformance(),
+                false
+        );
+    }
 
-   /**
-    * Returns primary text color.
-    */
-   public static int primaryColor() {
-      return PvpClient.themeEngine().text();
-   }
+    private static PARSFontEngine.Token getFontSizeToken(float size) {
+        if (size >= 24.0F) return PARSFontEngine.Token.DISPLAY;
+        if (size >= 18.0F) return PARSFontEngine.Token.TITLE;
+        if (size >= 14.0F) return PARSFontEngine.Token.HEADING;
+        if (size >= 11.0F) return PARSFontEngine.Token.BODY;
+        if (size >= 9.0F) return PARSFontEngine.Token.SMALL;
+        return PARSFontEngine.Token.CAPTION;
+    }
+
+    public static int mutedColor() {
+        return 0xFF7F8AA0;
+    }
+
+    public static int secondaryColor() {
+        return PvpClient.themeEngine().secondary();
+    }
+
+    public static int primaryColor() {
+        return PvpClient.themeEngine().text();
+    }
 }

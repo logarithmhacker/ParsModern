@@ -5,250 +5,240 @@ import parsmodernpvp_knl2s7pw.client.PvpClient;
 import parsmodernpvp_knl2s7pw.client.animation.AnimationEngine;
 
 /**
- * PARS Framework - Core rendering primitives for the premium UI system.
- * All visual elements are rendered through this centralized framework.
+ * Core PARS rendering primitives.
+ *
+ * The framework deliberately avoids noisy borders, oversized shadows and
+ * blocky corner hacks.  Surfaces use a small depth stack, one accent color,
+ * and restrained highlights so every screen reads as one coherent product.
  */
 public final class PARSFramework {
-   private PARSFramework() {
-   }
+    private PARSFramework() {
+    }
 
-   /**
-    * Renders the premium animated background with glassmorphism effects.
-    */
-   public static void background(GuiGraphicsExtractor g, int width, int height) {
-      UiBackground.render(g, width, height, PvpClient.backgroundOpacity());
-   }
+    public static void background(GuiGraphicsExtractor g, int width, int height) {
+        UiBackground.render(g, width, height, PvpClient.backgroundOpacity());
+    }
 
-   /**
-    * Renders a premium panel with shadows, borders, and rounded corners.
-    */
-   public static void panel(GuiGraphicsExtractor g, int x, int y, int width, int height) {
-      renderPanel(g, x, y, width, height, DesignTokens.RADIUS_MD);
-   }
+    public static void panel(GuiGraphicsExtractor g, int x, int y, int width, int height) {
+        panel(g, x, y, width, height, DesignTokens.RADIUS_LG);
+    }
 
-   /**
-    * Renders a panel with custom radius.
-    */
-   public static void panel(GuiGraphicsExtractor g, int x, int y, int width, int height, float radius) {
-      renderPanel(g, x, y, width, height, radius);
-   }
+    public static void panel(GuiGraphicsExtractor g, int x, int y, int width, int height, float radius) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
 
-   private static void renderPanel(GuiGraphicsExtractor g, int x, int y, int width, int height, float radius) {
-      int r = Math.max(0, Math.min((int)radius, Math.min(width, height) / 2));
-      int panelColor = PvpClient.themeEngine().color("panel");
-      int borderColor = PvpClient.themeEngine().color("border");
-      int shadowColor = DesignTokens.SHADOW_COLOR;
+        int r = safeRadius(radius, width, height);
+        int background = PvpClient.themeEngine().color("background");
+        int surface = PvpClient.themeEngine().color("panel");
+        int border = PvpClient.themeEngine().color("border");
+        int accent = PvpClient.themeEngine().accent();
 
-      // Layered shadow for depth
-      if (PvpClient.shadow() && PvpClient.panelDepth()) {
-         g.fill(x + 3, y + 4, x + width + 3, y + height + 4, shadowColor & 0x40FFFFFF | (shadowColor & 0xFFFFFF));
-         g.fill(x + 1, y + 2, x + width + 1, y + height + 2, DesignTokens.SHADOW_COLOR_SOFT);
-      }
+        if (PvpClient.shadow() && PvpClient.panelDepth()) {
+            fillRounded(g, x + 3, y + 4, width, height, r, 0x50000000);
+            fillRounded(g, x + 1, y + 2, width, height, r, 0x28000000);
+        }
 
-      // Panel body
-      g.fill(x + r, y, x + width - r, y + height, panelColor);
-      g.fill(x, y + r, x + width, y + height - r, panelColor);
-      
-      // Rounded corners
-      if (r > 0) {
-         int bgColor = PvpClient.themeEngine().color("background");
-         g.fill(x, y, x + r, y + r, bgColor);
-         g.fill(x + width - r, y, x + width, y + r, bgColor);
-         g.fill(x, y + height - r, x + r, y + height, bgColor);
-         g.fill(x + width - r, y + height - r, x + width, y + height, bgColor);
-         
-         // Corner fill to complete rounded effect
-         g.fill(x + r, y, x + width - r, y + r, panelColor);
-         g.fill(x + r, y + height - r, x + width - r, y + height, panelColor);
-      }
+        fillRounded(g, x, y, width, height, r, surface);
+        fillRoundedBorder(g, x, y, width, height, r, border, 1, surface);
 
-      // Subtle top border
-      g.fill(x + r, y, x + width - r, y + 1, borderColor);
-      
-      // Accent left border strip
-      int accentHeight = height - r * 2;
-      g.fill(x, y + r, x + 2, y + r + accentHeight, PvpClient.themeEngine().accent());
+        // Quiet top highlight instead of the old heavy left stripe.
+        g.fill(x + r, y + 1, x + width - r, y + 2, withAlpha(accent, 0.60F));
+        g.fill(x + r + 4, y + 3, x + width - r - 4, y + 4, withAlpha(0xFFFFFFFF, 0.035F));
 
-      // Inner glow effect
-      if (PvpClient.glow() && PvpClient.softLighting()) {
-         int glowColor = withAlpha(PvpClient.themeEngine().accent(), 0.08F);
-         g.fill(x + 2, y + 2, x + width - 2, y + 4, glowColor);
-      }
-   }
+        // Tiny corner pixels make the edge feel intentional without turning
+        // the whole panel into a neon rectangle.
+        int corner = withAlpha(background, 0.65F);
+        int cut = Math.max(1, Math.min(2, r / 4));
+        g.fill(x, y, x + cut, y + cut, corner);
+        g.fill(x + width - cut, y, x + width, y + cut, corner);
+        g.fill(x, y + height - cut, x + cut, y + height, corner);
+        g.fill(x + width - cut, y + height - cut, x + width, y + height, corner);
+    }
 
-   /**
-    * Renders a premium card component with hover state support.
-    */
-   public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean selected) {
-      card(g, x, y, width, height, selected, false);
-   }
+    public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height) {
+        card(g, x, y, width, height, false, false);
+    }
 
-   /**
-    * Renders a premium card with hover and selected states.
-    */
-   public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean hovered, boolean selected) {
-      int r = (int)DesignTokens.effectiveRadius();
-      r = Math.min(r, Math.min(width, height) / 2);
-      
-      int baseColor = selected 
-         ? PvpClient.themeEngine().color("hover") 
-         : PvpClient.themeEngine().color("card");
-      
-      // Shadow
-      if (PvpClient.shadow()) {
-         g.fill(x + 2, y + 3, x + width + 2, y + height + 3, DesignTokens.SHADOW_COLOR_SOFT);
-      }
+    public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean selected) {
+        card(g, x, y, width, height, false, selected);
+    }
 
-      // Card body
-      g.fill(x + r, y, x + width - r, y + height, baseColor);
-      g.fill(x, y + r, x + width, y + height - r, baseColor);
-      
-      // Corners
-      if (r > 0) {
-         int cornerColor = PvpClient.themeEngine().color("background");
-         g.fill(x, y, x + r, y + r, cornerColor);
-         g.fill(x + width - r, y, x + width, y + r, cornerColor);
-         g.fill(x, y + height - r, x + r, y + height, cornerColor);
-         g.fill(x + width - r, y + height - r, x + width, y + height, cornerColor);
-         
-         g.fill(x + r, y, x + width - r, y + r, baseColor);
-         g.fill(x + r, y + height - r, x + width - r, y + height, baseColor);
-      }
+    public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height,
+                            boolean hovered, boolean selected) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
 
-      // Selection indicator
-      int indicatorWidth = selected ? 3 : 1;
-      int indicatorColor = selected ? PvpClient.themeEngine().accent() : PvpClient.themeEngine().border();
-      g.fill(x, y, x + indicatorWidth, y + height, indicatorColor);
+        int r = safeRadius(DesignTokens.RADIUS_MD, width, height);
+        int surface = selected
+                ? PvpClient.themeEngine().color("hover")
+                : PvpClient.themeEngine().color("card");
+        int border = selected
+                ? withAlpha(PvpClient.themeEngine().accent(), 0.72F)
+                : PvpClient.themeEngine().color("border");
 
-      // Hover glow
-      if (hovered && !selected && PvpClient.glow()) {
-         int glowColor = withAlpha(PvpClient.themeEngine().accent(), 0.12F);
-         g.fill(x + 1, y + 1, x + width - 1, y + 3, glowColor);
-      }
-   }
+        if (PvpClient.shadow()) {
+            fillRounded(g, x + 2, y + 3, width, height, r, 0x30000000);
+        }
 
-   /**
-    * Renders a premium button with multiple states.
-    */
-   public static void button(GuiGraphicsExtractor g, String label, int x, int y, int width, int height, 
-                            boolean hovered, boolean active, boolean disabled) {
-      int r = (int)DesignTokens.RADIUS_SM;
-      
-      // Determine colors based on state
-      int bgColor;
-      int textColor;
-      
-      if (disabled) {
-         bgColor = 0x4D586070;
-         textColor = 0x808890A0;
-      } else if (active) {
-         bgColor = withAlpha(PvpClient.themeEngine().accent(), 0.85F);
-         textColor = -16313828;
-      } else if (hovered) {
-         bgColor = PvpClient.themeEngine().color("hover");
-         textColor = PvpClient.themeEngine().text();
-      } else {
-         bgColor = PvpClient.themeEngine().color("card");
-         textColor = PvpClient.themeEngine().text();
-      }
+        fillRounded(g, x, y, width, height, r, surface);
+        fillRoundedBorder(g, x, y, width, height, r, border, 1, surface);
 
-      // Shadow
-      if (PvpClient.shadow() && !disabled) {
-         g.fill(x + 2, y + 3, x + width + 2, y + height + 3, DesignTokens.SHADOW_COLOR_SOFT);
-      }
+        if (selected) {
+            g.fill(x + 1, y + r, x + 3, y + height - r, PvpClient.themeEngine().accent());
+            g.fill(x + r, y + 1, x + width - r, y + 2, withAlpha(PvpClient.themeEngine().accent(), 0.35F));
+        } else if (hovered && PvpClient.glow()) {
+            g.fill(x + r, y + 1, x + width - r, y + 3,
+                    withAlpha(PvpClient.themeEngine().accent(), 0.10F));
+        }
+    }
 
-      // Button body
-      g.fill(x + r, y, x + width - r, y + height, bgColor);
-      g.fill(x, y + r, x + width, y + height - r, bgColor);
-      
-      // Corners
-      if (r > 0) {
-         int cornerColor = PvpClient.themeEngine().color("background");
-         g.fill(x, y, x + r, y + r, cornerColor);
-         g.fill(x + width - r, y, x + width, y + r, cornerColor);
-         g.fill(x, y + height - r, x + r, y + height, cornerColor);
-         g.fill(x + width - r, y + height - r, x + width, y + height, cornerColor);
-         
-         g.fill(x + r, y, x + width - r, y + r, bgColor);
-         g.fill(x + r, y + height - r, x + width - r, y + height, bgColor);
-      }
+    public static void button(GuiGraphicsExtractor g, String label, int x, int y,
+                              int width, int height, boolean hovered, boolean active,
+                              boolean disabled) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
 
-      // Left accent for active state
-      if (active) {
-         g.fill(x, y + r, x + 2, y + height - r, PvpClient.themeEngine().secondary());
-      }
+        int r = safeRadius(DesignTokens.RADIUS_MD, width, height);
+        int accent = PvpClient.themeEngine().accent();
+        int textColor = PvpClient.themeEngine().text();
+        int surface;
+        int border;
 
-      // Hover pulse animation
-      if (hovered && !disabled && !PvpClient.reducedMotion()) {
-         float pulse = AnimationEngine.ease(
-            (float)((Math.sin(System.nanoTime() / 2.0E8) + 1.0) * 0.5), 
-            AnimationEngine.Curve.EASE_IN_OUT
-         );
-         int pulseColor = withAlpha(PvpClient.themeEngine().secondary(), 0.2F + pulse * 0.2F);
-         g.fill(x + 3, y + height - 2, x + width - 3, y + height - 1, pulseColor);
-      }
+        if (disabled) {
+            surface = withAlpha(PvpClient.themeEngine().color("card"), 0.45F);
+            border = withAlpha(PvpClient.themeEngine().color("border"), 0.45F);
+            textColor = withAlpha(textColor, 0.40F);
+        } else if (active) {
+            surface = withAlpha(accent, 0.88F);
+            border = withAlpha(accent, 0.95F);
+            textColor = 0xFFFFFFFF;
+        } else if (hovered) {
+            surface = PvpClient.themeEngine().color("hover");
+            border = withAlpha(accent, 0.70F);
+        } else {
+            surface = PvpClient.themeEngine().color("card");
+            border = PvpClient.themeEngine().color("border");
+        }
 
-      // Label
-      PARSFontEngine.centered(
-         g, label, x + width / 2, y + height / 2, textColor, 
-         PARSFontEngine.Token.SMALL, PvpClient.shadow(), false
-      );
-   }
+        if (PvpClient.shadow() && !disabled) {
+            fillRounded(g, x + 2, y + 3, width, height, r, 0x30000000);
+        }
 
-   /**
-    * Simplified button rendering for quick use.
-    */
-   public static void button(GuiGraphicsExtractor g, String label, int x, int y, int width, int height, 
-                            boolean hovered, boolean active) {
-      button(g, label, x, y, width, height, hovered, active, false);
-   }
+        fillRounded(g, x, y, width, height, r, surface);
+        fillRoundedBorder(g, x, y, width, height, r, border, 1, surface);
 
-   /**
-    * Renders a premium progress bar.
-    */
-   public static void progress(GuiGraphicsExtractor g, int x, int y, int width, int height, float value) {
-      progress(g, x, y, width, height, value, false);
-   }
+        if (!disabled) {
+            // A restrained top sheen gives the button a premium material feel.
+            g.fill(x + r, y + 1, x + width - r, y + 2,
+                    withAlpha(active ? 0xFFFFFFFF : accent, active ? 0.18F : 0.12F));
 
-   /**
-    * Renders a premium progress bar with optional glow.
-    */
-   public static void progress(GuiGraphicsExtractor g, int x, int y, int width, int height, float value, boolean glow) {
-      int r = height / 2;
-      float clamped = Math.max(0.0F, Math.min(1.0F, value));
-      int filledWidth = Math.round(width * clamped);
+            if (hovered && !active && !PvpClient.reducedMotion()) {
+                float pulse = AnimationEngine.ease(
+                        (float) ((Math.sin(System.nanoTime() / 2.2E8) + 1.0) * 0.5),
+                        AnimationEngine.Curve.EASE_IN_OUT
+                );
+                g.fill(x + r, y + height - 2, x + width - r, y + height - 1,
+                        withAlpha(accent, 0.10F + pulse * 0.10F));
+            }
+        }
 
-      // Background track
-      int trackColor = 0x4D586070;
-      g.fill(x + r, y, x + width - r, y + height, trackColor);
-      g.fill(x, y + r, x + width, y + height - r, trackColor);
-      if (r > 0) {
-         g.fill(x + r, y, x + width - r, y + r, trackColor);
-         g.fill(x + r, y + height - r, x + width - r, y + height, trackColor);
-      }
+        PARSFontEngine.centered(
+                g,
+                label,
+                x + width / 2,
+                y + height / 2,
+                textColor,
+                active ? PARSFontEngine.Token.BODY : PARSFontEngine.Token.SMALL,
+                !disabled && PvpClient.shadow(),
+                false
+        );
+    }
 
-      // Fill color with gradient effect
-      int fillColor = PvpClient.themeEngine().accent();
-      if (glow && PvpClient.glow()) {
-         // Outer glow
-         int glowColor = withAlpha(fillColor, 0.3F);
-         g.fill(x - 1, y - 1, x + filledWidth + 1, y + height + 1, glowColor);
-      }
-      
-      // Main fill
-      g.fill(x + r, y, x + filledWidth - r, y + height, fillColor);
-      g.fill(x, y + r, x + filledWidth, y + height - r, fillColor);
-      
-      // Highlight overlay
-      int highlight = 0x40FFFFFF;
-      g.fill(x + 2, y + 1, x + filledWidth - 2, y + 3, highlight);
-   }
+    public static void button(GuiGraphicsExtractor g, String label, int x, int y,
+                              int width, int height, boolean hovered, boolean active) {
+        button(g, label, x, y, width, height, hovered, active, false);
+    }
 
-   /**
-    * Applies alpha channel to a color.
-    */
-   private static int withAlpha(int color, float alpha) {
-      int a = Math.max(0, Math.min(255, Math.round((color >>> 24 & 0xFF) * alpha)));
-      return a << 24 | color & 0xFFFFFF;
-   }
+    public static void progress(GuiGraphicsExtractor g, int x, int y, int width, int height, float value) {
+        progress(g, x, y, width, height, value, false);
+    }
+
+    public static void progress(GuiGraphicsExtractor g, int x, int y, int width, int height,
+                                float value, boolean glow) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        float clamped = Math.max(0.0F, Math.min(1.0F, value));
+        int r = Math.min(height / 2, 6);
+        int fillWidth = Math.round(width * clamped);
+        int track = withAlpha(PvpClient.themeEngine().color("border"), 0.55F);
+        int accent = PvpClient.themeEngine().accent();
+
+        fillRounded(g, x, y, width, height, r, track);
+
+        if (fillWidth > 0) {
+            if (glow && PvpClient.glow()) {
+                fillRounded(g, x - 1, y - 1, fillWidth + 2, height + 2, r + 1,
+                        withAlpha(accent, 0.16F));
+            }
+            fillRounded(g, x, y, fillWidth, height, Math.min(r, fillWidth / 2), accent);
+            if (fillWidth > 4) {
+                g.fill(x + 2, y + 1, Math.max(x + 2, x + fillWidth - 2), y + 2,
+                        withAlpha(0xFFFFFFFF, 0.20F));
+            }
+        }
+    }
+
+    private static int safeRadius(float radius, int width, int height) {
+        return Math.max(0, Math.min((int) radius, Math.min(width, height) / 2));
+    }
+
+    private static void fillRounded(GuiGraphicsExtractor g, int x, int y, int width,
+                                    int height, int radius, int color) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        if (radius <= 0) {
+            g.fill(x, y, x + width, y + height, color);
+            return;
+        }
+
+        for (int row = 0; row < height; row++) {
+            int inset = 0;
+            if (row < radius) {
+                inset = radius - (int) Math.floor(Math.sqrt(radius * radius -
+                        (radius - row - 0.5) * (radius - row - 0.5)));
+            } else if (row >= height - radius) {
+                int fromBottom = height - row - 1;
+                inset = radius - (int) Math.floor(Math.sqrt(radius * radius -
+                        (radius - fromBottom - 0.5) * (radius - fromBottom - 0.5)));
+            }
+            inset = Math.max(0, Math.min(radius, inset));
+            g.fill(x + inset, y + row, x + width - inset, y + row + 1, color);
+        }
+    }
+
+    private static void fillRoundedBorder(GuiGraphicsExtractor g, int x, int y, int width,
+                                           int height, int radius, int color, int thickness,
+                                           int innerColor) {
+        if (thickness <= 0) {
+            return;
+        }
+        fillRounded(g, x, y, width, height, radius, color);
+        int inner = Math.max(0, radius - thickness);
+        fillRounded(g, x + thickness, y + thickness,
+                Math.max(0, width - thickness * 2),
+                Math.max(0, height - thickness * 2), inner,
+                innerColor);
+    }
+
+    public static int withAlpha(int color, float alpha) {
+        int rgb = color & 0xFFFFFF;
+        int a = Math.max(0, Math.min(255, Math.round(alpha * 255.0F)));
+        return (a << 24) | rgb;
+    }
 }

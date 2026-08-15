@@ -2,74 +2,68 @@ package parsmodernpvp_knl2s7pw.client.ui;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
-import parsmodernpvp_knl2s7pw.client.animation.AnimationEngine;
 
-/**
- * Premium toggle switch component with smooth animations and glassmorphism styling.
- */
+/** Minimal pill toggle with a crisp thumb and subtle accent glow. */
 public final class PARSToggle {
-   private PARSToggle() {
-   }
+    private PARSToggle() {
+    }
 
-   public static void draw(GuiGraphicsExtractor g, int x, int y, boolean enabled) {
-      draw(g, x, y, enabled, true);
-   }
+    public static void draw(GuiGraphicsExtractor g, int x, int y, boolean enabled) {
+        draw(g, x, y, enabled, true);
+    }
 
-   public static void draw(GuiGraphicsExtractor g, int x, int y, boolean enabled, boolean animated) {
-      int width = 36;
-      int height = 20;
-      float radius = height / 2.0F;
-      
-      int trackBg = enabled 
-         ? withAlpha(PvpClient.theme().accent(), 0.85F) 
-         : 0x4D586070;
-      
-      if (PvpClient.shadow()) {
-         g.fill(x + 1, y + 2, x + width + 1, y + height + 2, DesignTokens.SHADOW_COLOR_SOFT);
-      }
-      
-      fillRoundedRect(g, x, y, width, height, radius, trackBg);
-      
-      if (enabled && PvpClient.glow()) {
-         int glowColor = withAlpha(PvpClient.theme().accent(), 0.3F);
-         g.fill(x - 2, y - 2, x + width + 2, y + height + 2, glowColor);
-      }
-      
-      float thumbX;
-      if (animated && !PvpClient.reducedMotion()) {
-         long animStart = System.nanoTime() - (enabled ? 0L : DesignTokens.DURATION_NORMAL * 1000000L);
-         float progress = AnimationEngine.progress(animStart, DesignTokens.DURATION_NORMAL * 1000000L, AnimationEngine.Curve.SPRING, false);
-         thumbX = x + 2 + (width - height - 2) * progress;
-      } else {
-         thumbX = enabled ? x + width - height + 1 : x + 1;
-      }
-      
-      int thumbY = y + 1;
-      int thumbSize = height - 2;
-      
-      g.fill((int)thumbX + 1, thumbY + 2, (int)thumbX + thumbSize + 1, thumbY + thumbSize + 2, DesignTokens.SHADOW_COLOR);
-      
-      int thumbColor = enabled ? -1 : 0xFF8890A0;
-      fillRoundedRect(g, (int)thumbX, thumbY, thumbSize, thumbSize, thumbSize / 2.0F, thumbColor);
-      
-      if (enabled) {
-         int highlight = 0x40FFFFFF;
-         g.fill((int)thumbX + 3, thumbY + 3, (int)thumbX + thumbSize - 3, thumbY + 5, highlight);
-      }
-   }
-   
-   private static void fillRoundedRect(GuiGraphicsExtractor g, int x, int y, int width, int height, float radius, int color) {
-      int r = Math.max(0, Math.min((int)radius, Math.min(width, height) / 2));
-      g.fill(x + r, y, x + width - r, y + height, color);
-      g.fill(x, y + r, x + width, y + height - r, color);
-      if (r > 0) {
-         g.fill(x + r, y, x + width - r, y + r, color);
-         g.fill(x + r, y + height - r, x + width - r, y + height, color);
-      }
-   }
-   
-   private static int withAlpha(int color, float alpha) {
-      int a = Math.max(0, Math.min(255, (int)((color >>> 24 & 0xFF) * alpha)));
-      return a << 24 | color & 0xFFFFFF;
-   }
+    public static void draw(GuiGraphicsExtractor g, int x, int y, boolean enabled, boolean animated) {
+        int width = UiScale.s(38);
+        int height = UiScale.s(20);
+        int radius = height / 2;
+
+        int accent = PvpClient.themeEngine().accent();
+        int track = enabled
+                ? PARSFramework.withAlpha(accent, 0.84F)
+                : PARSFramework.withAlpha(PvpClient.themeEngine().color("border"), 0.72F);
+
+        if (PvpClient.shadow()) {
+            fillRounded(g, x + UiScale.s(1), y + UiScale.s(2), width, height, radius, 0x30000000);
+        }
+
+        fillRounded(g, x, y, width, height, radius, track);
+        fillRounded(g, x + UiScale.s(1), y + UiScale.s(1),
+                Math.max(1, width - UiScale.s(2)), Math.max(1, height - UiScale.s(2)),
+                Math.max(1, radius - UiScale.s(1)),
+                enabled ? PARSFramework.withAlpha(accent, 0.34F) : 0x20000000);
+
+        int thumb = UiScale.s(16);
+        int thumbX = enabled ? x + width - thumb - UiScale.s(2) : x + UiScale.s(2);
+        int thumbY = y + (height - thumb) / 2;
+
+        if (enabled && PvpClient.glow()) {
+            fillRounded(g, thumbX - UiScale.s(2), thumbY - UiScale.s(2),
+                    thumb + UiScale.s(4), thumb + UiScale.s(4), thumb / 2,
+                    PARSFramework.withAlpha(accent, 0.16F));
+        }
+
+        fillRounded(g, thumbX + UiScale.s(1), thumbY + UiScale.s(2), thumb, thumb,
+                thumb / 2, 0x35000000);
+        fillRounded(g, thumbX, thumbY, thumb, thumb, thumb / 2,
+                enabled ? 0xFFFFFFFF : 0xFFD2D7E0);
+    }
+
+    private static void fillRounded(GuiGraphicsExtractor g, int x, int y,
+                                    int width, int height, int radius, int color) {
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+        if (radius <= 0) {
+            g.fill(x, y, x + width, y + height, color);
+            return;
+        }
+        for (int row = 0; row < height; row++) {
+            int fromEdge = Math.min(row, height - row - 1);
+            int inset = fromEdge < radius
+                    ? radius - (int) Math.floor(Math.sqrt(radius * radius -
+                    (radius - fromEdge - 0.5) * (radius - fromEdge - 0.5)))
+                    : 0;
+            g.fill(x + inset, y + row, x + width - inset, y + row + 1, color);
+        }
+    }
 }

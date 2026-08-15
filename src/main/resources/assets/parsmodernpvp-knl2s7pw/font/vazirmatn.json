@@ -3,8 +3,17 @@
     {
       "type": "ttf",
       "file": "parsmodernpvp-knl2s7pw:vazirmatn.ttf",
-      "shift": [0, 0],
-      "size": 11
+      "shift": [0.0, 0.0],
+      "size": 17.0,
+      "oversample": 4.0
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:default"
+    },
+    {
+      "type": "reference",
+      "id": "minecraft:uniform"
     }
   ]
 }

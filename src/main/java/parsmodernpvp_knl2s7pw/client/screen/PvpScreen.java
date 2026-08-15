@@ -60,15 +60,15 @@ public final class PvpScreen extends Screen {
    }
 
    private int left() {
-      return Math.max(s(12), this.width / 2 - s(420));
+      return Math.max(s(12), this.width / 2 - s(450));
    }
 
    private int top() {
-      return Math.max(s(14), this.height / 2 - s(210));
+      return Math.max(s(14), this.height / 2 - s(250));
    }
 
    private int contentLeft() {
-      return this.left() + s(164);
+      return this.left() + s(178);
    }
 
    protected void init() {
@@ -78,7 +78,7 @@ public final class PvpScreen extends Screen {
 
       for (int i = 0; i < NAV.length; i++) {
          String target = NAV[i].toLowerCase().replace(" ", "");
-         this.addRenderableWidget(Button.builder(Component.empty(), b -> this.selectPage(target)).bounds(l + s(12), t + s(56 + i * 34), s(136), s(28)).build());
+         this.addRenderableWidget(Button.builder(Component.empty(), b -> this.selectPage(target)).bounds(l + s(12), t + s(58 + i * 42), s(150), s(34)).build());
       }
 
       if (this.page.equals("modules")) {
@@ -98,7 +98,7 @@ public final class PvpScreen extends Screen {
          this.addSettings(content, t + s(22));
       }
 
-      this.addRenderableWidget(Button.builder(Component.empty(), b -> this.onClose()).bounds(l + s(744), t + s(374), s(82), s(26)).build());
+      this.addRenderableWidget(Button.builder(Component.empty(), b -> this.onClose()).bounds(l + s(804), t + s(444), s(82), s(26)).build());
 
       for (GuiEventListener child : this.children()) {
          if (child instanceof Button button) {
@@ -476,14 +476,14 @@ public final class PvpScreen extends Screen {
    public void extractRenderState(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
       int l = this.left();
       int t = this.top();
-      int right = l + s(840);
-      int bottom = t + s(400);
+      int right = l + s(900);
+      int bottom = t + s(480);
       PARSFramework.background(g, this.width, this.height);
       PARSFramework.panel(g, l, t, right - l, bottom - t);
-      g.fill(l + s(158), t + s(16), l + s(159), bottom - s(16), PvpClient.theme().border());
+      g.fill(l + s(172), t + s(16), l + s(173), bottom - s(16), PvpClient.theme().border());
       UiTypography.title(g, "PARS", l + s(20), t + s(18), PvpClient.theme().accent());
       UiTypography.text(g, "CONTROL CENTER", l + s(21), t + s(38), -8220248, 0.6F, 0);
-      UiTypography.text(g, "v13  //  " + PvpClient.profiles().active().displayName(), l + s(20), bottom - s(28), -8220248, 0.6F, 0);
+      UiTypography.text(g, "v13  //  " + PvpClient.profiles().active().displayName(), l + s(20), bottom - s(24), -8220248, 0.6F, 0);
       this.drawSidebar(g, l, t, mouseX, mouseY);
       UiTypography.text(g, this.pageTitle(), this.contentLeft(), t + s(20), PvpClient.theme().text(), 0.85F * PvpClient.fontScale(), 0);
       UiTypography.text(g, this.pageSubtitle(), this.contentLeft(), t + s(36), -8220248, 0.6F, 0);
@@ -531,16 +531,16 @@ public final class PvpScreen extends Screen {
    private void drawSidebar(GuiGraphicsExtractor g, int l, int t, int mx, int my) {
       for (int i = 0; i < NAV.length; i++) {
          int x = l + s(12);
-         int y = t + s(56 + i * 34);
+         int y = t + s(58 + i * 42);
          String target = NAV[i].toLowerCase().replace(" ", "");
          boolean selected = this.page.equals(target);
-         boolean hover = mx >= x && mx < x + s(136) && my >= y && my < y + s(28);
+         boolean hover = mx >= x && mx < x + s(150) && my >= y && my < y + s(34);
          if (selected || hover) {
-            g.fill(x, y, x + s(136), y + s(28), selected ? PvpClient.theme().accent() : 1144680337);
+            g.fill(x, y, x + s(150), y + s(34), selected ? PvpClient.theme().accent() : 1144680337);
          }
 
-         g.fill(x, y, x + (selected ? s(3) : s(1)), y + s(28), selected ? PvpClient.theme().secondary() : PvpClient.theme().border());
-         UiTypography.text(g, NAV[i], x + s(12), y + s(9), selected ? -16313828 : PvpClient.theme().text(), 0.64F, 0);
+         g.fill(x, y, x + (selected ? s(3) : s(1)), y + s(34), selected ? PvpClient.theme().secondary() : PvpClient.theme().border());
+         UiTypography.text(g, NAV[i], x + s(12), y + s(11), selected ? -16313828 : PvpClient.theme().text(), 0.64F, 0);
       }
    }
 
@@ -695,11 +695,15 @@ public final class PvpScreen extends Screen {
       if (this.page.equals("hudeditor") && e.button() == 0) {
          for (String id : this.hudIds()) {
             HudLayout h = PvpClient.hudLayout(id);
-            if (e.x() >= h.x() && e.x() <= h.x() + 120 && e.y() >= h.y() && e.y() <= h.y() + 30) {
+            int canvasX = this.contentLeft() + s(180);
+            int canvasY = this.top() + s(18) + s(42);
+            int chipX = canvasX + h.x() / 5;
+            int chipY = canvasY + h.y() / 5;
+            if (e.x() >= chipX && e.x() <= chipX + s(76) && e.y() >= chipY && e.y() <= chipY + s(16)) {
                PvpClient.setSelectedHud(id);
                this.dragging = id;
-               this.dragOffsetX = (int)e.x() - h.x();
-               this.dragOffsetY = (int)e.y() - h.y();
+               this.dragOffsetX = (int)e.x() - chipX;
+               this.dragOffsetY = (int)e.y() - chipY;
                return true;
             }
          }
@@ -711,13 +715,16 @@ public final class PvpScreen extends Screen {
    public boolean mouseDragged(MouseButtonEvent e, double dx, double dy) {
       if (this.page.equals("hudeditor") && this.dragging != null && e.button() == 0) {
          HudLayout h = PvpClient.hudLayout(this.dragging);
-         int x = (int)e.x() - this.dragOffsetX;
-         int y = (int)e.y() - this.dragOffsetY;
+         int canvasX = this.contentLeft() + s(180);
+         int canvasY = this.top() + s(18) + s(42);
+         int px = Math.max(0, (int)e.x() - canvasX - this.dragOffsetX);
+         int py = Math.max(0, (int)e.y() - canvasY - this.dragOffsetY);
+         int x = Math.clamp(px * 5, 0, 800);
+         int y = Math.clamp(py * 5, 0, 480);
          if (h.snapToGrid()) {
             x = x / 8 * 8;
             y = y / 8 * 8;
          }
-
          PvpClient.setHudLayout(this.dragging, h.move(x, y));
          return true;
       } else {

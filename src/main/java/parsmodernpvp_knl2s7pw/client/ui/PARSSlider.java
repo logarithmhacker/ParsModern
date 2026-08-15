@@ -2,77 +2,68 @@ package parsmodernpvp_knl2s7pw.client.ui;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
-import parsmodernpvp_knl2s7pw.client.animation.AnimationEngine;
 
-/**
- * Premium slider component with smooth animations and gradient fill.
- */
+/** Clean slider with a single accent rail and precise thumb. */
 public final class PARSSlider {
-   private PARSSlider() {
-   }
+    private PARSSlider() {
+    }
 
-   public static void draw(GuiGraphicsExtractor g, int x, int y, int width, float value) {
-      draw(g, x, y, width, DesignTokens.BUTTON_HEIGHT_MD, value, false);
-   }
+    public static void draw(GuiGraphicsExtractor g, int x, int y, int width, float value) {
+        draw(g, x, y, width, DesignTokens.BUTTON_HEIGHT_MD, value, false);
+    }
 
-   public static void draw(GuiGraphicsExtractor g, int x, int y, int width, int height, float value) {
-      draw(g, x, y, width, height, value, false);
-   }
+    public static void draw(GuiGraphicsExtractor g, int x, int y, int width,
+                            int height, float value) {
+        draw(g, x, y, width, height, value, false);
+    }
 
-   public static void draw(GuiGraphicsExtractor g, int x, int y, int width, int height, float value, boolean interactive) {
-      int r = height / 2;
-      float clamped = Math.max(0.0F, Math.min(1.0F, value));
-      int filledWidth = Math.round(width * clamped);
-      
-      // Track background
-      int trackColor = 0x4D586070;
-      fillRoundedRect(g, x, y, width, height, r, trackColor);
-      
-      // Fill with gradient effect
-      int fillColor = PvpClient.themeEngine().accent();
-      
-      // Glow effect
-      if (PvpClient.glow() && interactive) {
-         int glowColor = withAlpha(fillColor, 0.25F);
-         g.fill(x - 2, y - 2, x + filledWidth + 2, y + height + 2, glowColor);
-      }
-      
-      // Main fill
-      fillRoundedRect(g, x, y, filledWidth, height, r, fillColor);
-      
-      // Highlight overlay
-      int highlight = 0x50FFFFFF;
-      g.fill(x + 3, y + 2, x + filledWidth - 3, y + 4, highlight);
-      
-      // Thumb indicator
-      if (interactive || filledWidth > 0) {
-         int thumbX = x + filledWidth - r;
-         int thumbY = y + 1;
-         int thumbSize = height - 2;
-         
-         // Thumb shadow
-         g.fill(thumbX + 1, thumbY + 2, thumbX + thumbSize + 1, thumbY + thumbSize + 2, DesignTokens.SHADOW_COLOR);
-         
-         // Thumb body
-         int thumbColor = -1;
-         fillRoundedRect(g, thumbX, thumbY, thumbSize, thumbSize, (int)(thumbSize / 2.0F), thumbColor);
-      }
-   }
-   
-   private static void fillRoundedRect(GuiGraphicsExtractor g, int x, int y, int width, int height, int radius, int color) {
-      int r = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
-      if (width <= 0 || height <= 0) return;
-      
-      g.fill(x + r, y, Math.max(x + r, x + width - r), y + height, color);
-      g.fill(x, y + r, x + width, y + height - r, color);
-      if (r > 0) {
-         g.fill(x + r, y, Math.max(x + r, x + width - r), y + r, color);
-         g.fill(x + r, y + height - r, Math.max(x + r, x + width - r), y + height, color);
-      }
-   }
-   
-   private static int withAlpha(int color, float alpha) {
-      int a = Math.max(0, Math.min(255, (int)((color >>> 24 & 0xFF) * alpha)));
-      return a << 24 | color & 0xFFFFFF;
-   }
+    public static void draw(GuiGraphicsExtractor g, int x, int y, int width,
+                            int height, float value, boolean interactive) {
+        int w = UiScale.s(width);
+        int h = Math.max(UiScale.s(6), UiScale.s(height) / 3);
+        float clamped = Math.max(0.0F, Math.min(1.0F, value));
+        int filled = Math.round(w * clamped);
+        int radius = h / 2;
+        int accent = PvpClient.themeEngine().accent();
+        int track = PARSFramework.withAlpha(PvpClient.themeEngine().color("border"), 0.70F);
+
+        fillRounded(g, x, y, w, h, radius, track);
+
+        if (filled > 0) {
+            if (interactive && PvpClient.glow()) {
+                fillRounded(g, x - 1, y - 1, filled + 2, h + 2, radius + 1,
+                        PARSFramework.withAlpha(accent, 0.14F));
+            }
+            fillRounded(g, x, y, filled, h, Math.min(radius, filled / 2), accent);
+        }
+
+        int thumb = Math.max(UiScale.s(10), h + UiScale.s(4));
+        int thumbX = x + Math.round((w - thumb) * clamped);
+        int thumbY = y + h / 2 - thumb / 2;
+        fillRounded(g, thumbX + 1, thumbY + 2, thumb, thumb, thumb / 2, 0x35000000);
+        fillRounded(g, thumbX, thumbY, thumb, thumb, thumb / 2, 0xFFFFFFFF);
+
+        if (interactive) {
+            g.fill(thumbX + thumb / 2 - 1, thumbY + thumb / 2 - 1,
+                    thumbX + thumb / 2 + 1, thumbY + thumb / 2 + 1,
+                    PARSFramework.withAlpha(accent, 0.75F));
+        }
+    }
+
+    private static void fillRounded(GuiGraphicsExtractor g, int x, int y,
+                                    int width, int height, int radius, int color) {
+        if (width <= 0 || height <= 0) return;
+        if (radius <= 0) {
+            g.fill(x, y, x + width, y + height, color);
+            return;
+        }
+        for (int row = 0; row < height; row++) {
+            int fromEdge = Math.min(row, height - row - 1);
+            int inset = fromEdge < radius
+                    ? radius - (int) Math.floor(Math.sqrt(radius * radius -
+                    (radius - fromEdge - 0.5) * (radius - fromEdge - 0.5)))
+                    : 0;
+            g.fill(x + inset, y + row, x + width - inset, y + row + 1, color);
+        }
+    }
 }

@@ -19,6 +19,7 @@ import net.minecraft.client.gui.screens.TitleScreen;
 import parsmodernpvp_knl2s7pw.Parsmodernpvp;
 import parsmodernpvp_knl2s7pw.client.config.ConfigManager;
 import parsmodernpvp_knl2s7pw.client.cosmetics.CosmeticsManager;
+import parsmodernpvp_knl2s7pw.client.cosmetics.CosmeticsWorldEffects;
 import parsmodernpvp_knl2s7pw.client.event.EventBus;
 import parsmodernpvp_knl2s7pw.client.hud.HudLayout;
 import parsmodernpvp_knl2s7pw.client.module.Module;
@@ -28,7 +29,6 @@ import parsmodernpvp_knl2s7pw.client.performance.PerformanceMonitor;
 import parsmodernpvp_knl2s7pw.client.profile.Profile;
 import parsmodernpvp_knl2s7pw.client.profile.ProfileManager;
 import parsmodernpvp_knl2s7pw.client.resource.ResourceManager;
-import parsmodernpvp_knl2s7pw.client.screen.ParsLoadingScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsMainMenuScreen;
 import parsmodernpvp_knl2s7pw.client.screen.ParsPauseScreen;
 import parsmodernpvp_knl2s7pw.client.screen.PvpScreen;
@@ -143,6 +143,7 @@ public final class PvpClient {
             }
 
             performance.observeMouse(client.mouseHandler.isLeftPressed(), client.mouseHandler.isRightPressed());
+            CosmeticsWorldEffects.tick(client);
             activateTitleScreen(client);
             if (client.player != null && client.screen instanceof PauseScreen) {
                client.setScreen(new ParsPauseScreen());
@@ -188,7 +189,7 @@ public final class PvpClient {
    private static void activateTitleScreen(Minecraft client) {
       if (!startupFlowShown && client.player == null && client.screen instanceof TitleScreen) {
          startupFlowShown = true;
-         client.setScreen(new ParsLoadingScreen(new ParsMainMenuScreen()));
+         client.setScreen(new ParsMainMenuScreen());
       }
    }
 
