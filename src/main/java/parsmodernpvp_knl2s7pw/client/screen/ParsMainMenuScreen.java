@@ -61,8 +61,13 @@ public final class ParsMainMenuScreen extends Screen {
       this.addNav("MULTIPLAYER", left, top + s(40), s(258), DesignTokens.RADIUS_LG, () -> this.minecraft.setScreen(new JoinMultiplayerScreen(this)));
       
       // Secondary navigation group
+<<<<<<< HEAD
       this.addNav("PROFILE", left, top + s(88), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new ParsProfileScreen()));
       this.addNav("COSMETICS", left, top + s(132), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new ParsCosmeticsScreen()));
+=======
+      this.addNav("PROFILE", left, top + s(88), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("profiles")));
+      this.addNav("COSMETICS", left, top + s(132), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("style")));
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
       this.addNav("SETTINGS", left, top + s(176), s(258), DesignTokens.RADIUS_MD, () -> this.minecraft.setScreen(new PvpScreen("settings")));
       
       // Tertiary action

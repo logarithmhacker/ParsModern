@@ -12,9 +12,25 @@ public final class UiNotifications {
     private UiNotifications() {
     }
 
+<<<<<<< HEAD
     public static void push(String message) {
         push(message, NotificationType.INFO);
     }
+=======
+   public static void push(String message, long durationMs) {
+      push(message, NotificationType.INFO, durationMs);
+   }
+
+   public static void push(String message, NotificationType type) {
+      push(message, type, 3000L);
+   }
+   
+   public static void push(String message, NotificationType type, long durationMs) {
+      shiftNotifications();
+      notifications[0] = new Notification(message, type, System.nanoTime(), durationMs);
+      UiSoundEngine.notification();
+   }
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 
     public static void push(String message, long durationMs) {
         push(message, NotificationType.INFO, durationMs);
@@ -80,6 +96,7 @@ public final class UiNotifications {
         fillRoundedBorder(g, x, y, width, height, r, border,
                 withAlpha(PvpClient.themeEngine().color("panel"), alpha * 0.96F));
 
+<<<<<<< HEAD
         int accentWidth = UiScale.s(3);
         g.fill(x + 1, y + r, x + accentWidth, y + height - r,
                 withAlpha(n.type.accentColor, alpha));
@@ -98,6 +115,29 @@ public final class UiNotifications {
                 x + UiScale.s(12) + barWidth, y + height - UiScale.s(2),
                 withAlpha(n.type.accentColor, alpha * 0.65F));
     }
+=======
+   private static class Notification {
+      final String message;
+      final NotificationType type;
+      final long created;
+      final long durationMs;
+
+      Notification(String message, NotificationType type, long created) {
+         this(message, type, created, 3000L);
+      }
+      
+      Notification(String message, NotificationType type, long created, long durationMs) {
+         this.message = message;
+         this.type = type;
+         this.created = created;
+         this.durationMs = durationMs;
+      }
+
+      boolean isExpired() {
+         return System.nanoTime() - created > durationMs * 1000000L;
+      }
+   }
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 
     private static void shiftNotifications() {
         for (int i = MAX_NOTIFICATIONS - 1; i > 0; i--) {

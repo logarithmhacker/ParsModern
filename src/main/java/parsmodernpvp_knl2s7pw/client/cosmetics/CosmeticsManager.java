@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+<<<<<<< HEAD
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +16,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.client.Minecraft;
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 import parsmodernpvp_knl2s7pw.client.PvpClient;
 import parsmodernpvp_knl2s7pw.client.ui.UiNotifications;
 
@@ -32,7 +35,10 @@ public final class CosmeticsManager {
    public CosmeticsManager() {
       initializeCatalog();
       loadDefaults();
+<<<<<<< HEAD
       loadState();
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
    }
    
    /**
@@ -129,11 +135,17 @@ public final class CosmeticsManager {
       if (currentlyEquipped != null && currentlyEquipped.equals(cosmeticId)) {
          equippedCosmetics.remove(type);
          UiNotifications.push("Unequipped " + cosmetic.getName(), 2000L);
+<<<<<<< HEAD
          saveState();
       } else {
          equippedCosmetics.put(type, cosmeticId);
          UiNotifications.push("Equipped " + cosmetic.getName(), 2000L);
          saveState();
+=======
+      } else {
+         equippedCosmetics.put(type, cosmeticId);
+         UiNotifications.push("Equipped " + cosmetic.getName(), 2000L);
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
       }
    }
    
@@ -148,7 +160,10 @@ public final class CosmeticsManager {
       
       equippedCosmetics.put(cosmetic.getType(), cosmeticId);
       UiNotifications.push("Equipped " + cosmetic.getName(), 2000L);
+<<<<<<< HEAD
       saveState();
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
    }
    
    /**
@@ -156,7 +171,10 @@ public final class CosmeticsManager {
     */
    public void unequip(CosmeticType type) {
       equippedCosmetics.remove(type);
+<<<<<<< HEAD
       saveState();
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
    }
    
    /**
@@ -336,6 +354,7 @@ public final class CosmeticsManager {
       }
       return result;
    }
+<<<<<<< HEAD
    private Path statePath() {
       Minecraft mc = Minecraft.getInstance();
       Path root = mc != null ? mc.gameDirectory.toPath() : Path.of(".");
@@ -391,4 +410,6 @@ public final class CosmeticsManager {
       }
    }
 
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 }

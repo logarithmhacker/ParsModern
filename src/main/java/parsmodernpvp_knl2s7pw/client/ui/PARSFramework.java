@@ -56,9 +56,25 @@ public final class PARSFramework {
         g.fill(x + width - cut, y + height - cut, x + width, y + height, corner);
     }
 
+<<<<<<< HEAD
     public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height) {
         card(g, x, y, width, height, false, false);
     }
+=======
+   /**
+    * Renders a premium card component with default styling (no hover/selected state).
+    */
+   public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height) {
+      card(g, x, y, width, height, false);
+   }
+
+   /**
+    * Renders a premium card component with hover state support.
+    */
+   public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean selected) {
+      card(g, x, y, width, height, selected, false);
+   }
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 
     public static void card(GuiGraphicsExtractor g, int x, int y, int width, int height, boolean selected) {
         card(g, x, y, width, height, false, selected);

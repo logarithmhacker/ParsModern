@@ -2,6 +2,7 @@
   "providers": [
     {
       "type": "ttf",
+<<<<<<< HEAD
       "file": "parsmodernpvp-knl2s7pw:vazirmatn.ttf",
       "shift": [0.0, 0.0],
       "size": 17.0,
@@ -14,6 +15,11 @@
     {
       "type": "reference",
       "id": "minecraft:uniform"
+=======
+      "file": "parsmodernpvp-knl2s7pw:font/vazirmatn.ttf",
+      "shift": [0, 0],
+      "size": 11
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
     }
   ]
 }

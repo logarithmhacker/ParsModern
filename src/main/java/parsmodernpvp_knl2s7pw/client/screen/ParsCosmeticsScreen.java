@@ -1,17 +1,26 @@
 package parsmodernpvp_knl2s7pw.client.screen;
 
+<<<<<<< HEAD
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.client.Minecraft;
+=======
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+<<<<<<< HEAD
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import parsmodernpvp_knl2s7pw.client.PvpClient;
@@ -51,10 +60,13 @@ public class ParsCosmeticsScreen extends Screen {
    private static int s(int value) {
       return UiScale.s(value);
    }
+<<<<<<< HEAD
 
    private static float sf(float value) {
       return UiScale.s(value);
    }
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
    
    private int left() {
       return Math.max(s(16), this.width / 2 - s(450));
@@ -222,9 +234,15 @@ public class ParsCosmeticsScreen extends Screen {
       
       // Preview panel (right side)
       if (this.selectedCosmetic != null) {
+<<<<<<< HEAD
          this.renderPreviewPanel(g, l + s(650), t + s(46), partialTick);
       } else if (this.hoveredCosmetic != null && System.currentTimeMillis() - this.lastHoverChange > 150L) {
          this.renderPreviewPanel(g, l + s(650), t + s(46), partialTick);
+=======
+         this.renderPreviewPanel(g, l + s(650), t + s(46));
+      } else if (this.hoveredCosmetic != null && System.currentTimeMillis() - this.lastHoverChange > 150L) {
+         this.renderPreviewPanel(g, l + s(650), t + s(46));
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
       }
       
       // Scroll bar
@@ -323,6 +341,7 @@ public class ParsCosmeticsScreen extends Screen {
       }
    }
    
+<<<<<<< HEAD
    private void renderPreviewPanel(GuiGraphicsExtractor g, int x, int y, float partialTick) {
       Cosmetic c = this.selectedCosmetic != null ? this.selectedCosmetic : this.hoveredCosmetic;
       if (c == null) return;
@@ -440,6 +459,75 @@ public class ParsCosmeticsScreen extends Screen {
       return lines;
    }
 
+=======
+   private void renderPreviewPanel(GuiGraphicsExtractor g, int x, int y) {
+      Cosmetic c = this.selectedCosmetic != null ? this.selectedCosmetic : this.hoveredCosmetic;
+      if (c == null) return;
+      
+      int width = s(220);
+      int height = s(380);
+      
+      PARSFramework.panel(g, x, y, width, height);
+      
+      // Rarity gradient background
+      int rarityColor = c.getRarity().getColor();
+      g.fill(x + s(10), y + s(10), x + width - s(10), y + s(100), rarityColor | 0x33FFFFFF);
+      
+      // Preview icon (large)
+      int iconSize = s(80);
+      int iconX = x + (width - iconSize) / 2;
+      int iconY = y + s(30);
+      g.fill(iconX, iconY, iconX + iconSize, iconY + iconSize, rarityColor | 0x88FFFFFF);
+      
+      // Name
+      UiTypography.heading(g, c.getName(), x + s(16), y + s(110), PvpClient.themeEngine().text());
+      
+      // Type
+      UiTypography.text(g, c.getType().getDisplayName(), x + s(16), y + s(130), PvpClient.themeEngine().secondary(), 0.68F, 0);
+      
+      // Rarity
+      int rarityTextColor = c.getRarity().getColor();
+      UiTypography.text(g, c.getRarity().getDisplayName(), x + s(16), y + s(148), rarityTextColor | 0xFF000000, 0.64F, 0);
+      
+      // Description
+      if (!c.getDescription().isBlank()) {
+         g.fill(x + s(16), y + s(168), x + width - s(16), y + s(170), PvpClient.themeEngine().border());
+         UiTypography.body(g, c.getDescription(), x + s(16), y + s(180), PvpClient.themeEngine().muted());
+      }
+      
+      // Action buttons
+      boolean unlocked = PvpClient.cosmetics().isUnlocked(c.getId());
+      boolean equipped = PvpClient.cosmetics().isEquipped(c.getId());
+      boolean favorite = PvpClient.cosmetics().isFavorite(c.getId());
+      
+      int btnY = y + s(260);
+      
+      // Equip/Unequip button
+      String equipLabel = equipped ? "UNEQUIP" : (unlocked ? "EQUIP" : "LOCKED");
+      boolean canEquip = unlocked && !equipped;
+      this.addRenderableWidget(Button.builder(Component.literal(equipLabel), btn -> {
+         if (unlocked) {
+            PvpClient.cosmetics().toggle(c.getId());
+         }
+         UiSoundEngine.confirm();
+         this.rebuildWidgets();
+      }).bounds(x + s(16), btnY, s(188), s(32)).build());
+      
+      // Favorite button
+      String favLabel = favorite ? "★ UNFAVORITE" : "☆ FAVORITE";
+      this.addRenderableWidget(Button.builder(Component.literal(favLabel), btn -> {
+         PvpClient.cosmetics().toggleFavorite(c.getId());
+         UiSoundEngine.click();
+         this.rebuildWidgets();
+      }).bounds(x + s(16), btnY + s(40), s(188), s(28)).build());
+      
+      // Animated indicator
+      if (c.isAnimated()) {
+         UiTypography.text(g, "⟡ ANIMATED", x + s(16), y + s(320), PvpClient.themeEngine().accent(), 0.58F, 0);
+      }
+   }
+   
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
    private boolean isMouseOverCategory(int mouseX, int mouseY, int index) {
       int x = this.left() + s(12);
       int y = this.top() + s(50 + index * 38);
@@ -495,6 +583,7 @@ public class ParsCosmeticsScreen extends Screen {
          }
       }
       
+<<<<<<< HEAD
       // Preview controls are handled here instead of mutating widgets during render.
       Cosmetic preview = this.selectedCosmetic != null ? this.selectedCosmetic : this.hoveredCosmetic;
       if (preview != null) {
@@ -515,6 +604,8 @@ public class ParsCosmeticsScreen extends Screen {
          }
       }
 
+=======
+>>>>>>> 77bc9da847b12cb9940d49afdb8df99b0af11b92
       return super.mouseClicked(e, doubleClick);
    }
 }
